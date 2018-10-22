@@ -29,7 +29,6 @@ export default class Home extends Component {
     if (!valid[1]) {
       const response = await fetch(EMAIL_ENDPOINT + '/token', {
         mode: 'no-cors',
-        credentials: 'same-origin',
         method: 'POST',
         headers: {
           'Content-Type':'application/json'
