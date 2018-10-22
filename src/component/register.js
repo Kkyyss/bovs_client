@@ -13,7 +13,7 @@ export default class Register extends Component {
   handleRegister = async(e) => {
     e.preventDefault();
     this.setState({ fetching: true });
-    const { token } = this.props.match.params;
+    const { email, token } = this.props.match.params;
     const { user } = this.state.contract;
     const { accounts, voter } = this.state.user;
 
@@ -26,24 +26,30 @@ export default class Register extends Component {
       })
     });
 
-    const email = await response.json()
-    console.log(response)
+    if (response.status === 200) {
+      if (email) {
+        try {
+          await user.loginUser(email, { from: accounts[0] });
+        } catch (err) {
+          this.setState({ fetching: false });
+          return;
+        }
 
-    if (email) {
-      try {
-        await user.loginUser(email, { from: accounts[0] });
-      } catch (err) {
-        this.setState({ fetching: false });
-        return;
+        this.setState({ fetching: false }, () => {
+          this.props.history.push("/" + accounts[0] + "/" + email + "/" + ((voter) ? "voter" : "organizer"));
+        });
       }
-
-      this.setState({ fetching: false }, () => {
-        this.props.history.push("/" + accounts[0] + "/" + email + "/" + ((voter) ? "voter" : "organizer"));
-      });
     }
+
   }
 
   render() {
+    if (this.state.fetching) {
+      return (
+        <div>Loading...</div>
+      );
+    }
+
     return (
       <div>
         <div>Register</div>

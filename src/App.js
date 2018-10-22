@@ -66,6 +66,14 @@ class App extends Component {
           user: userInstance,
           election: electionInstance
         } });
+      web3.currentProvider.publicConfigStore.on('update', async() => {
+        const { web3 } = this.state;
+        const { accounts } = this.state.user;
+        const currentAccount = await web3.eth.getAccounts();
+        if (currentAccount[0] !== accounts[0]) {
+          window.location.href = "/";
+        }
+      });
     } catch (err) {
       this.setState({ fetching: false });
     }
@@ -84,7 +92,7 @@ class App extends Component {
         <div>
           <Switch>
             <Route exact path="/" render={(props)=><Home {...props} state={this.state} />} />
-            <Route exact path="/register/:token" render={(props)=><Register {...props} state={this.state} />} />
+            <Route exact path="/register/:email/:token" render={(props)=><Register {...props} state={this.state} />} />
             <Route exact path="/logout" component={Logout} />
             <Route exact path="/:userId/:email/voter" render={(props)=><Voter {...props} state={this.state} />} />
             <Route exact path="/:userId/:email/voter/:electionId" render={(props)=><VoterPoll {...props} state={this.state} />} />

@@ -20,7 +20,7 @@ export default class Home extends Component {
     const { user, election } = this.state.contract;
     const { accounts, email, voter } = this.state.user;
 
-    const valid = await user.verifyCredentials(this.state.user.email);
+    const valid = await user.verifyCredentials(this.state.user.email, { from: accounts[0] });
     if (!valid[0]) {
       console.log("Email/account is invalid.");
       return;
