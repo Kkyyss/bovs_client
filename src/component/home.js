@@ -28,6 +28,7 @@ export default class Home extends Component {
     this.setState({ fetching: true });
     if (!valid[1]) {
       const response = await fetch(EMAIL_ENDPOINT + '/token', {
+        mode: 'no-cors',
         method: 'POST',
         headers: {
           'Content-Type':'application/json'

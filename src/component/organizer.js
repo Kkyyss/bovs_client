@@ -55,6 +55,7 @@ export default class Organizer extends Component {
       const emails = voters.split(";");
 
       const response = await fetch(EMAIL_ENDPOINT + "/email", {
+        mode: 'no-cors',
         method: 'POST',
         headers: {
           'Content-Type':'application/json'
