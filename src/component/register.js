@@ -18,7 +18,7 @@ export default class Register extends Component {
     const { accounts, voter } = this.state.user;
 
     const response = await fetch(EMAIL_ENDPOINT + '/verification', {
-      mode: 'no-cors',
+      credentials: 'same-origin',
       method: 'POST',
       headers: {'Content-Type':'application/json'},
       body: JSON.stringify({
@@ -27,7 +27,7 @@ export default class Register extends Component {
     });
 
     const email = await response.json()
-    console.log(email)
+    console.log(response)
 
     if (email) {
       try {
