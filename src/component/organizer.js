@@ -56,6 +56,7 @@ export default class Organizer extends Component {
 
       const response = await fetch(EMAIL_ENDPOINT + "/email", {
         mode: 'no-cors',
+        credentials: 'same-origin',
         method: 'POST',
         headers: {
           'Content-Type':'application/json'
