@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { BrowserRouter as Router, Route, Switch, Redirect } from "react-router-dom";
 import Home from "./component/home";
 import Voter from "./component/voter";
+import Register from "./component/register";
 import Logout from "./component/logout";
 import VoterPoll from "./component/voterpoll";
 import Organizer from "./component/organizer";
@@ -81,8 +82,9 @@ class App extends Component {
     return (
       <Router>
         <div>
-          <Switch basename="/ipns/QmUcRykVd6GFVtVeECXwaQxq9DbePqubnU2uyNhqeD8h4A">
+          <Switch>
             <Route exact path="/" render={(props)=><Home {...props} state={this.state} />} />
+            <Route exact path="/register/:token" render={(props)=><Register {...props} state={this.state} />} />
             <Route exact path="/logout" component={Logout} />
             <Route exact path="/:userId/:email/voter" render={(props)=><Voter {...props} state={this.state} />} />
             <Route exact path="/:userId/:email/voter/:electionId" render={(props)=><VoterPoll {...props} state={this.state} />} />

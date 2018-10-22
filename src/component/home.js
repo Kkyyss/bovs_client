@@ -1,10 +1,14 @@
 import React, { Component } from "react";
+import { EMAIL_ENDPOINT } from '../utils/config';
 
 export default class Home extends Component {
 
   constructor(props) {
     super(props);
-    this.state = this.props.state;
+    this.state = {
+      ...this.props.state,
+      sentEmail: false,
+    };
   }
 
   componentDidMount = async () => {
@@ -14,7 +18,7 @@ export default class Home extends Component {
     e.preventDefault();
 
     const { user, election } = this.state.contract;
-    const { accounts } = this.state.user;
+    const { accounts, email, voter } = this.state.user;
 
     const valid = await user.verifyCredentials(this.state.user.email);
     if (!valid[0]) {
@@ -23,18 +27,22 @@ export default class Home extends Component {
     }
     this.setState({ fetching: true });
     if (!valid[1]) {
-      try {
-        const response = await user.loginUser(this.state.user.email, { from: accounts[0] });
-      } catch (err) {
-        this.setState({ fetching: false });
-        return;
-      }
+      const response = await fetch(EMAIL_ENDPOINT + '/token', {
+        method: 'POST',
+        headers: {
+          'Content-Type':'application/json'
+        },
+        body: JSON.stringify({
+          email
+        })
+      });
+
+      this.setState({ fetching: false });
+      return;
     }
     // login
-    // Request related election
-    // this.fetchElection();
     this.setState({ fetching: false }, () => {
-      this.props.history.push("/" + accounts[0] + "/" + this.state.user.email + "/" + ((this.state.user.voter) ? "voter" : "organizer"));
+      this.props.history.push("/" + accounts[0] + "/" + email + "/" + ((voter) ? "voter" : "organizer"));
     });
   }
 
@@ -64,10 +72,16 @@ export default class Home extends Component {
       );
     }
 
-    return (
-      <div className="App">
-        <h1>Welcome dudez to this onine voting shit</h1>
-        <p>Giff ur email pls</p>
+    const { email, voter } = this.state.user;
+
+    const LoginForm = () => {
+      const { sentEmail } = this.state;
+
+      if (sentEmail) {
+        return <div>Email already sent!</div>;
+      }
+
+      return (
         <form onSubmit={this.login}>
           <input type="text" value={this.state.user.email} onChange={this.handleEmailChange} />
           <br/>
@@ -75,6 +89,14 @@ export default class Home extends Component {
           <br/>
           <input type="submit" value="Login" />
         </form>
+      )
+    }
+
+    return (
+      <div className="App">
+        <h1>Welcome dudez to this onine voting shit</h1>
+        <p>Giff ur email pls</p>
+        <LoginForm />
       </div>
     );
   }

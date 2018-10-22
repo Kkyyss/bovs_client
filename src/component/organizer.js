@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import * as moment from 'moment';
 import { Link } from "react-router-dom";
 
+import { EMAIL_ENDPOINT } from '../utils/config';
+
 export default class Organizer extends Component {
   constructor(props) {
     super(props);
@@ -26,24 +28,10 @@ export default class Organizer extends Component {
       return;
     }
     await this.fetchElectionAddress();
-    await this.listenCreateElectionEvent();
   }
 
   componentWillUnmount = async() => {
     await this.setState({ unmounted: true });
-  }
-
-  listenCreateElectionEvent = async() => {
-    const { election } = this.state.contract;
-    const { web3 } = this.state;
-
-    const latestBlock = await web3.eth.getBlockNumber();
-    election.electionCreated().watch((err, response) => {
-      if (response.blockNumber > latestBlock) {
-         this.clearElectionForm();
-         this.fetchElectionAddress();
-      }
-    });
   }
 
   createElection = async (e) => {
@@ -54,13 +42,37 @@ export default class Organizer extends Component {
     const { election } = this.state.contract;
     const { accounts } = this.state.user;
     const { title, candidates, voters, manual, startNow, start, end } = this.state.electionForm
+    const dStart = moment(start).unix();
+    const dEnd = moment(end).unix();
 
     try {
       await election.createElection(
         email, title,
         candidates.split(";"), voters.split(";"),
         manual, startNow,
-        moment(start).unix(), moment(end).unix(), { from: accounts[0] });
+        dStart, dEnd, { from: accounts[0] });
+      // sent emails to notify voters
+      const emails = voters.split(";");
+
+      const response = await fetch(EMAIL_ENDPOINT + "/email", {
+        method: 'POST',
+        headers: {
+          'Content-Type':'application/json'
+        },
+        body: JSON.stringify({
+          emails,
+          election: {
+            title,
+            manual,
+            startNow,
+            dStart,
+            dEnd
+          }
+        })
+      });
+
+      await this.clearElectionForm();
+      await this.fetchElectionAddress();
     } catch (err) {
       this.setState({ fetching: false });
     }
@@ -159,11 +171,11 @@ export default class Organizer extends Component {
         <div>Organizer</div>
         { this.state.address }
         <form onSubmit={this.createElection}>
-          <input type="text" value={electionForm.title} onChange={this.handleTitleChange} />
+          Title <input type="text" value={electionForm.title} onChange={this.handleTitleChange} />
           <br/>
-          <input type="text" value={electionForm.candidates} onChange={this.handleCandidatesChange} />
+          Candidates <input type="text" value={electionForm.candidates} onChange={this.handleCandidatesChange} />
           <br/>
-          <input type="text" value={electionForm.voters} onChange={this.handleVotersChange} />
+          Voters <input type="text" value={electionForm.voters} onChange={this.handleVotersChange} />
           <br/>
           Manual <input type="checkbox" value={electionForm.manual} onChange={this.handleManualChange} />
           <br/>
