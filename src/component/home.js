@@ -73,30 +73,19 @@ export default class Home extends Component {
     }
 
     const { email, voter } = this.state.user;
-
-    const LoginForm = () => {
-      const { sentEmail } = this.state;
-
-      if (sentEmail) {
-        return <div>Email already sent!</div>;
-      }
-
-      return (
-        <form onSubmit={this.login}>
-          <input type="text" value={this.state.user.email} onChange={this.handleEmailChange} />
-          <br/>
-          <span>im voter</span><input type="checkbox" value={this.state.user.voter} onChange={this.handleRoleChange} />
-          <br/>
-          <input type="submit" value="Login" />
-        </form>
-      )
-    }
+    const { sentEmail } = this.state;
 
     return (
       <div className="App">
         <h1>Welcome dudez to this onine voting shit</h1>
         <p>Giff ur email pls</p>
-        <LoginForm />
+        <form onSubmit={this.login}>
+          <input type="text" value={email} onChange={this.handleEmailChange} />
+          <br/>
+          <span>im voter</span><input type="checkbox" value={voter} onChange={this.handleRoleChange} />
+          <br/>
+          <input type="submit" value="Login" />
+        </form>
       </div>
     );
   }
