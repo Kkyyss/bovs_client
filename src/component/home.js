@@ -1,14 +1,22 @@
 import React, { Component } from "react";
+import { Link } from 'react-router-dom';
 import { EMAIL_ENDPOINT } from '../utils/config';
 
-export default class Home extends Component {
+import { Form, Icon, Input, Button, Tabs } from 'antd';
+
+const FormItem = Form.Item;
+const TabPane = Tabs.TabPane;
+
+class Home extends Component {
 
   constructor(props) {
     super(props);
     this.state = {
       ...this.props.state,
       sentEmail: false,
+      currentTab: '1',
     };
+
   }
 
   componentDidMount = async () => {
@@ -16,54 +24,58 @@ export default class Home extends Component {
 
   login = async(e) => {
     e.preventDefault();
+    const { form: { validateFields } } = this.props;
+    const { currentTab } = this.state;
 
-    const { user, election } = this.state.contract;
-    const { accounts, email, voter } = this.state.user;
-
-    const valid = await user.verifyCredentials(this.state.user.email, { from: accounts[0] });
-    if (!valid[0]) {
-      console.log("Email/account is invalid.");
-      return;
-    }
-    this.setState({ fetching: true });
-    if (!valid[1]) {
-      const response = await fetch(EMAIL_ENDPOINT + '/token', {
-        credentials: 'same-origin',
-        method: 'POST',
-        headers: {
-          'Content-Type':'application/json'
-        },
-        body: JSON.stringify({
-          email
-        })
+    if (currentTab === '1') {
+      await validateFields(['orgEmail'], (err, vals) => {
+        if (err) {
+          return;
+        }
+        this.setState({ user: {
+          ...this.state.user,
+          email: vals.orgEmail,
+          role: 'organizer'
+        } });
       });
-
-      this.setState({ fetching: false });
-      return;
+    } else {
+      await validateFields(['votEmail'], (err, vals) => {
+        if (err) {
+          return;
+        }
+        this.setState({ user: {
+          ...this.state.user,
+          email: vals.votEmail,
+          role: 'voter'
+        } });
+      });
     }
-    // login
-    this.setState({ fetching: false }, () => {
-      this.props.history.push("/" + accounts[0] + "/" + email + "/" + ((voter) ? "voter" : "organizer"));
+
+    const { email, role } = this.state.user;
+
+
+    this.setState({ fetching: true });
+    const response = await fetch(EMAIL_ENDPOINT + '/token', {
+      credentials: 'same-origin',
+      method: 'POST',
+      headers: {
+        'Content-Type':'application/json'
+      },
+      body: JSON.stringify({
+        email,
+        role
+      })
     });
+
+    if (response.status !== 200) {
+      console.log(response);
+    }
+
+    this.setState({ fetching: false });
   }
 
-  handleEmailChange = (e) => {
-    // e.preventDefault();
-    this.setState({
-      user: {
-        ...this.state.user,
-        email: e.target.value
-      }
-    });
-  }
-
-  handleRoleChange = (e) => {
-    this.setState({
-      user: {
-        ...this.state.user,
-        voter: e.target.checked
-      }
-    });
+  handleTabChange = (currentTab) => {
+    this.setState({ currentTab });
   }
 
   render() {
@@ -73,21 +85,52 @@ export default class Home extends Component {
       );
     }
 
-    const { email, voter } = this.state.user;
-    const { sentEmail } = this.state;
+
+    const { getFieldDecorator } = this.props.form;
 
     return (
-      <div className="App">
-        <h1>Welcome dudez to this onine voting shit</h1>
-        <p>Giff ur email pls</p>
-        <form onSubmit={this.login}>
-          <input type="text" value={email} onChange={this.handleEmailChange} />
-          <br/>
-          <span>im voter</span><input type="checkbox" value={voter} onChange={this.handleRoleChange} />
-          <br/>
-          <input type="submit" value="Login" />
-        </form>
+      <div className="login-container">
+        <div className="login-header" />
+        <div className="login-content">
+          <div className="login-title-header center">
+            <Link to="/">
+              <span className="login-title">Blockchain-based Online Voting System</span>
+            </Link>
+          </div>
+          <div className="login-title-desc"></div>
+          <div className="login-content-main">
+            <Form onSubmit={this.login}>
+              <Tabs defaultActiveKey="1" onTabClick={this.handleTabChange} animated={false}>
+                <TabPane tab="Organizer" key="1">
+                  <FormItem>
+                    {getFieldDecorator('orgEmail', {
+                      rules: [{type: 'email', message: 'The input is not valid E-mail!'}, {required: true, message: 'Please input your E-mail!' }],
+                    })(
+                      <Input prefix={<Icon type="mail" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Email" />
+                    )}
+                  </FormItem>
+                </TabPane>
+                <TabPane tab="Voter" key="2">
+                  <FormItem>
+                    {getFieldDecorator('votEmail', {
+                      rules: [{type: 'email', message: 'The input is not valid E-mail!'}, {required: true, message: 'Please input your E-mail!' }],
+                    })(
+                      <Input prefix={<Icon type="mail" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Email" />
+                    )}
+                  </FormItem>
+                </TabPane>
+              </Tabs>
+              <FormItem>
+                <Button type="primary" htmlType="submit" block>
+                  Send Magic Link
+                </Button>
+              </FormItem>
+            </Form>
+          </div>
+        </div>
       </div>
     );
   }
 }
+
+export default Form.create()(Home);

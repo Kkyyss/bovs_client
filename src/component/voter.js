@@ -14,6 +14,7 @@ export default class Voter extends Component {
     const { unmounted } = this.state;
 
     if (unmounted) {
+      await this.setState({ unmounted: false });
       return;
     }
 

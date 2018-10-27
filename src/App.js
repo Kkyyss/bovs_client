@@ -1,19 +1,13 @@
 import React, { Component } from "react";
-import { BrowserRouter as Router, Route, Switch, Redirect } from "react-router-dom";
-import Home from "./component/home";
-import Voter from "./component/voter";
-import Register from "./component/register";
-import Logout from "./component/logout";
-import VoterPoll from "./component/voterpoll";
-import Organizer from "./component/organizer";
-import OrganizerPoll from "./component/organizerpoll";
-import NotFound from "./component/404";
+import { BrowserRouter as Router } from "react-router-dom";
 import ElectionFactory from "./contracts/ElectionFactory.json";
 import User from "./contracts/User.json";
 import TruffleContract from 'truffle-contract';
 import getWeb3 from "./utils/getWeb3";
+import Routes from "./routes";
+import * as moment from 'moment';
 
-import "./App.css";
+import { EMAIL_ENDPOINT } from './utils/config';
 
 class App extends Component {
   constructor(props) {
@@ -35,6 +29,7 @@ class App extends Component {
 
   componentDidMount = async () => {
     this.initialMetaAndContract();
+    this.initialServerDateTime();
   };
 
   initialMetaAndContract = async () => {
@@ -48,13 +43,8 @@ class App extends Component {
 
       // Get the contract instance.
       const ElectionContract = TruffleContract(ElectionFactory);
-      const UserContract = TruffleContract(User);
       ElectionContract.setProvider(web3.currentProvider);
-      UserContract.setProvider(web3.currentProvider);
       const electionInstance = await ElectionContract.deployed();
-      const userInstance = await UserContract.deployed();
-      console.log(electionInstance);
-      console.log(userInstance);
 
       // Set web3, accounts, and contract to the state, and then proceed with an
       // example of interacting with the contract's methods.
@@ -63,7 +53,6 @@ class App extends Component {
         web3,
         user: { ...this.state.user, accounts },
         contract: {
-          user: userInstance,
           election: electionInstance
         } });
       web3.currentProvider.publicConfigStore.on('update', async() => {
@@ -79,6 +68,23 @@ class App extends Component {
     }
   }
 
+  initialServerDateTime = async() => {
+    const response = await fetch(EMAIL_ENDPOINT + "/current-dt", {
+      credentials: 'same-origin',
+      method: 'GET',
+      headers: {
+        'Content-Type':'application/json',
+      }
+    });
+    const currentDateTime = await response.json();
+    const offsetDateTime = moment.unix(currentDateTime.now).valueOf() - Date.now();
+    const now = moment(Date.now() + offsetDateTime);
+
+    setInterval(() => { now.add(1, 's'); }, 1000);
+
+    moment.now = function() { return now; }
+  }
+
   render() {
     if (this.state.fetching) {
       return <div>Loading...</div>;
@@ -90,17 +96,7 @@ class App extends Component {
     return (
       <Router>
         <div>
-          <Switch>
-            <Route exact path="/" render={(props)=><Home {...props} state={this.state} />} />
-            <Route exact path="/register/:email/:token" render={(props)=><Register {...props} state={this.state} />} />
-            <Route exact path="/logout" component={Logout} />
-            <Route exact path="/:userId/:email/voter" render={(props)=><Voter {...props} state={this.state} />} />
-            <Route exact path="/:userId/:email/voter/:electionId" render={(props)=><VoterPoll {...props} state={this.state} />} />
-            <Route exact path="/:userId/:email/organizer" render={(props)=><Organizer {...props} state={this.state} />} />
-            <Route exact path="/:userId/:email/organizer/:electionId" render={(props)=><OrganizerPoll {...props} state={this.state} />} />
-            <Route path="/404" render={(props)=><NotFound {...props} state={this.state} />} />
-            <Redirect from="*" to="/404" />
-          </Switch>
+          <Routes {...this.props} state={this.state} />
         </div>
       </Router>
     );

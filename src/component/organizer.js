@@ -1,8 +1,7 @@
 import React, { Component } from "react";
 import * as moment from 'moment';
 import { Link } from "react-router-dom";
-
-import { EMAIL_ENDPOINT } from '../utils/config';
+import { Breadcrumb, Button } from 'antd';
 
 export default class Organizer extends Component {
   constructor(props) {
@@ -12,13 +11,15 @@ export default class Organizer extends Component {
       electionForm: {
         title: "",
         candidates: "",
+        mode: 0,
         voters: "",
         manual: false,
         startNow: false,
         start: 0,
         end: 0
       },
-      address: []
+      address: [],
+      addressFetching: false
     };
   }
 
@@ -34,63 +35,8 @@ export default class Organizer extends Component {
     await this.setState({ unmounted: true });
   }
 
-  createElection = async (e) => {
-    e.preventDefault();
-
-    this.setState({ fetching: true });
-    const { email, userId } = this.props.match.params;
-    const { election } = this.state.contract;
-    const { accounts } = this.state.user;
-    const { title, candidates, voters, manual, startNow, start, end } = this.state.electionForm
-    const dStart = moment(start).unix();
-    const dEnd = moment(end).unix();
-
-    try {
-      await election.createElection(
-        email, title,
-        candidates.split(";"), voters.split(";"),
-        manual, startNow,
-        dStart, dEnd, { from: accounts[0] });
-      // sent emails to notify voters
-      const emails = voters.split(";");
-
-      const response = await fetch(EMAIL_ENDPOINT + "/email", {
-        credentials: 'same-origin',
-        method: 'POST',
-        headers: {
-          'Content-Type':'application/json'
-        },
-        body: JSON.stringify({
-          emails,
-          election: {
-            title,
-            manual,
-            startNow,
-            dStart,
-            dEnd
-          }
-        })
-      });
-
-      await this.clearElectionForm();
-      await this.fetchElectionAddress();
-    } catch (err) {
-      this.setState({ fetching: false });
-    }
-  }
-
-  clearElectionForm = async() => {
-    await this.setState({ electionForm: {
-      title: "",
-      candidates: "",
-      voters: "",
-      manual: false,
-      startNow: false,
-    } });
-  }
-
   fetchElectionAddress = async () => {
-    this.setState({ fetching: true });
+    this.setState({ addressFetching: true });
     const { email, userId } = this.props.match.params;
     const { user, election } = this.state.contract;
 
@@ -112,50 +58,14 @@ export default class Organizer extends Component {
     }
 
     // Update state with the result.
-    this.setState({ address: myElectionAddress, fetching: false });
+    this.setState({ address: myElectionAddress, addressFetching: false });
   };
 
-  handleTitleChange = (e) => {
-    this.setState({ electionForm: {
-      ...this.state.electionForm,
-      title: e.target.value
-    }})
-  }
-  handleCandidatesChange = (e) => {
-    this.setState({ electionForm: {
-      ...this.state.electionForm,
-      candidates: e.target.value
-    }})
-  }
-  handleVotersChange = (e) => {
-    this.setState({ electionForm: {
-      ...this.state.electionForm,
-      voters: e.target.value
-    }})
-  }
-  handleManualChange = (e) => {
-    this.setState({ electionForm: {
-      ...this.state.electionForm,
-      manual: e.target.checked
-    }})
-  }
-  handleStartNowChange = (e) => {
-    this.setState({ electionForm: {
-      ...this.state.electionForm,
-      startNow: e.target.checked
-    }})
-  }
-  handleStartDateChange = (e) => {
-    this.setState({ electionForm: {
-      ...this.state.electionForm,
-      start: e.target.value
-    }})
-  }
-  handleEndDateChange = (e) => {
-    this.setState({ electionForm: {
-      ...this.state.electionForm,
-      end: e.target.value
-    }})
+  gotoCreate = (e) => {
+    e.preventDefault();
+    const { pathname } = this.props.location;
+
+    this.props.history.push(pathname + "/create");
   }
 
   render() {
@@ -165,29 +75,18 @@ export default class Organizer extends Component {
       );
     }
 
-    const { electionForm } = this.state;
+    const { electionForm, addressFetching } = this.state;
+    const { email, userId } = this.props.match.params;
 
     return (
       <div>
-        <div>Organizer</div>
-        { this.state.address }
-        <form onSubmit={this.createElection}>
-          Title <input type="text" value={electionForm.title} onChange={this.handleTitleChange} />
-          <br/>
-          Candidates <input type="text" value={electionForm.candidates} onChange={this.handleCandidatesChange} />
-          <br/>
-          Voters <input type="text" value={electionForm.voters} onChange={this.handleVotersChange} />
-          <br/>
-          Manual <input type="checkbox" value={electionForm.manual} onChange={this.handleManualChange} />
-          <br/>
-          Create & Start <input type="checkbox" value={electionForm.startNow} onChange={this.handleStartNowChange} />
-          <br/>
-          Stat Date<input type="datetime-local" value={electionForm.start} onChange={this.handleStartDateChange} />
-          <br/>
-          End Date<input type="datetime-local" value={electionForm.end} onChange={this.handleEndDateChange} />
-          <br/>
-          <input type="submit" value="Create" />
-        </form>
+        <Breadcrumb style={{ margin: '16px 0' }}>
+          <Breadcrumb.Item>Home</Breadcrumb.Item>
+        </Breadcrumb>
+        <div style={{ background: '#fff', padding: 24, margin: 0, height: '100%' }}>
+          <Button type="primary" icon="plus-circle" ghost onClick={this.gotoCreate}>Create</Button>
+          { (!addressFetching && this.state.address) || "Loading..." }
+        </div>
       </div>
     );
   }

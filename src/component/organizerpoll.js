@@ -1,5 +1,7 @@
-import React, { Component } from "react";
-import * as moment from 'moment';
+import React, { Component } from "react";import * as moment from 'moment';
+import { Breadcrumb } from 'antd';
+import { Link } from "react-router-dom";
+
 export default class OrganizerPoll extends Component {
   constructor(props) {
     super(props);
@@ -7,12 +9,14 @@ export default class OrganizerPoll extends Component {
       ...this.props.state,
       electionInfo: {
         title: "",
+        mode: 0,
         candidates: [],
         manual: false,
         status: null,
-        start: null,
-        end: null
+        start: 0,
+        end: 0
       },
+      fetchingContent: false,
       candidates: []
     };
   }
@@ -21,6 +25,7 @@ export default class OrganizerPoll extends Component {
     const { unmounted } = this.state;
 
     if (unmounted) {
+      await this.setState({ unmounted: false });
       return;
     }
 
@@ -109,21 +114,22 @@ export default class OrganizerPoll extends Component {
   }
 
   fetchElectionContent = async() => {
-    this.setState({ fetching: true });
-    const { email, userId, electionId } = this.props.match.params;
+    this.setState({ fetchingContent: true });
+    const { electionId } = this.props.match.params;
     const { election } = this.state.contract;
 
     const title = await election.getTitle(electionId);
+    const mode = await election.getMode(electionId);
     const manual = await election.isManual(electionId);
     const start = await election.getStartDate(electionId);
     if (manual) {
       const res = await election.getStatus(electionId);
-      this.setState({ electionInfo: { ...this.state.electionInfo, start, status: res.toNumber() }  })
+      this.setState({ electionInfo: { ...this.state.electionInfo, start: start.toNumber(), status: res.toNumber() }  })
     } else {
       // Compare date
       const end = await election.getEndDate(electionId);
       const status = (moment().unix() >= end) ? 1 : 0;
-      this.setState({ electionInfo: { ...this.state.electionInfo, start, end, status } })
+      this.setState({ electionInfo: { ...this.state.electionInfo, start, end: end.toNumber(), status } })
       if (!status) this.compareDate();
     }
     const candSize = await election.getCandidateSize(electionId);
@@ -137,8 +143,8 @@ export default class OrganizerPoll extends Component {
     }
 
     this.setState({ electionInfo: {
-      ...this.state.electionInfo, title, candidates, manual
-    }, fetching: false });
+      ...this.state.electionInfo, title, candidates, manual, mode
+    }, fetchingContent: false });
   }
 
   render() {
@@ -164,17 +170,31 @@ export default class OrganizerPoll extends Component {
       )
     };
 
-    const { electionInfo } = this.state;
+    const { electionInfo, fetchingContent } = this.state;
+    const { userId, email } = this.props.match.params;
 
-    return (
+    const contentbody = (
       <div>
-        <div>{ "organizer poll:" + electionInfo.title }</div>
-        <div>{ "Start date: " + moment.unix(electionInfo.start).format('MMMM Do YYYY, h:mm:ss a') }</div>
-        <div>{ "End date: " + moment.unix(electionInfo.end).format('MMMM Do YYYY, h:mm:ss a') }</div>
+        <div>{ "Poll:" + electionInfo.title }</div>
+        <div>{ "Mode:" + ((electionInfo.mode === 0) ? "Private" : "Public") }</div>
+        <div>{ "Start date: " + ((electionInfo.start !== 0) ? moment.unix(electionInfo.start).format('MMMM Do YYYY, h:mm:ss a') : "----") }</div>
+        <div>{ "End date: " + ((electionInfo.end !== 0) ? moment.unix(electionInfo.end).format('MMMM Do YYYY, h:mm:ss a') : "----") }</div>
         { electionInfo.candidates }
         { (electionInfo.manual && electionInfo.status === 2) && <StartButton /> }
         { (electionInfo.manual && electionInfo.status === 0) && <CloseButton /> }
         { electionInfo.status === 1 && <ResultContent /> }
+      </div>
+    )
+
+    return (
+      <div>
+        <Breadcrumb style={{ margin: '16px 0' }}>
+          <Breadcrumb.Item><Link to={ "/" + userId + "/" + email + "/organizer" }>Home</Link></Breadcrumb.Item>
+          <Breadcrumb.Item>{electionInfo.title}</Breadcrumb.Item>
+        </Breadcrumb>
+        <div style={{ background: '#fff', padding: 24, margin: 0, minHeight: 280 }}>
+          { (!fetchingContent && contentbody) || "Loading..." }
+        </div>
       </div>
     );
   }

@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import * as moment from 'moment';
+import { EMAIL_ENDPOINT } from '../utils/config';
+import CountdownClock from './countdown';
 
 export default class VoterPoll extends Component {
   constructor(props) {
@@ -11,7 +13,9 @@ export default class VoterPoll extends Component {
         candidates: [],
         manual: false,
         status: null,
-        winner: null
+        winner: null,
+        start: 0,
+        end: 0
       },
       voter: {
         voted: false,
@@ -27,11 +31,11 @@ export default class VoterPoll extends Component {
     const { unmounted } = this.state;
 
     if (unmounted) {
+      await this.setState({ unmounted: false });
       return;
     }
 
     await this.fetchElectionContent();
-    await this.listenVoteEvent();
     await this.listenClosedElectionEvent();
   }
 
@@ -39,17 +43,6 @@ export default class VoterPoll extends Component {
     await this.setState({ unmounted: true });
   }
 
-  listenVoteEvent = async() => {
-    const { election } = this.state.contract;
-    const { web3 } = this.state;
-
-    const latestBlock = await web3.eth.getBlockNumber();
-    election.votedEvent().watch((err, response) => {
-      if (response.blockNumber > latestBlock) {
-        this.fetchElectionContent();
-      }
-    });
-  }
   listenClosedElectionEvent = async() => {
     const { election } = this.state.contract;
     const { web3 } = this.state;
@@ -63,12 +56,14 @@ export default class VoterPoll extends Component {
   }
 
   compareDate = async() => {
-    const { end, status } = this.state.electionInfo;
+    const { start, end, status } = this.state.electionInfo;
     if (status === 1) return;
-    const curStatus = (moment().unix() >= end) ? 1 : 0;
-    if (curStatus && status !== 1) {
+    const curStatus = (moment().unix() < start) ? 2 : (moment().unix() >= end) ? 1 : 0;
+
+    const interval = 1000;
+    if (curStatus === 1) {
       await this.fetchWinner();
-      await this.setState({ electionInfo: { ...this.state.electionInfo, status } });
+      await this.setState({ electionInfo: { ...this.state.electionInfo, status: curStatus } });
       return;
     }
     setTimeout(this.compareDate, 1000);
@@ -82,13 +77,15 @@ export default class VoterPoll extends Component {
     const isVoted = await election.isVoted(electionId, email);
     const manual = await election.isManual(electionId);
     const start = await election.getStartDate(electionId);
+    console.log(start)
+
     await this.setState({ electionInfo: { ...this.state.electionInfo, manual, start }, voter: { ...this.state.voter, voted: isVoted } });
     if (manual) {
       const res = await election.getStatus(electionId);
       await this.setState({ electionInfo: { ...this.state.electionInfo, status: res.toNumber() } });
     } else {
       const end = await election.getEndDate(electionId);
-      const status = (moment().unix() >= end) ? 1 : 0;
+      const status = (moment().unix() < start) ? 2 : (moment().unix() >= end) ? 1 : 0;
       await this.setState({ electionInfo: { ...this.state.electionInfo, end, status } })
       if (!status) this.compareDate();
     }
@@ -125,7 +122,7 @@ export default class VoterPoll extends Component {
   }
 
   fetchCandidates = async() => {
-    const { email, userId, electionId } = this.props.match.params;
+    const { email, electionId } = this.props.match.params;
     const { election } = this.state.contract;
 
     const candSize = await election.getCandidateSize(electionId);
@@ -152,6 +149,7 @@ export default class VoterPoll extends Component {
 
     try {
       await election.vote(electionId, email, this.state.voteForm.selected, { from: accounts[0] });
+      this.fetchElectionContent();
     } catch (err) {
       this.setState({ fetching: false });
     }
@@ -189,6 +187,7 @@ export default class VoterPoll extends Component {
     return (
       <div>
         <div>voter poll</div>
+        { status !== 1 && <CountdownClock state={this.state} /> }
         { status === 1 && <Result /> }
         { (!voted && status === 0) && <VoteForm /> }
         { voted && <VotedTo /> }
