@@ -111,14 +111,14 @@
     "absolutePath": "/Users/kangyi/Projects/react_bc_vote/contracts/User.sol",
     "exportedSymbols": {
       "User": [
-        1293
+        1140
       ]
     },
-    "id": 1294,
+    "id": 1141,
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 1208,
+        "id": 1055,
         "literals": [
           "solidity",
           "^",
@@ -131,10 +131,10 @@
       {
         "absolutePath": "/Users/kangyi/Projects/react_bc_vote/contracts/Type.sol",
         "file": "./Type.sol",
-        "id": 1209,
+        "id": 1056,
         "nodeType": "ImportDirective",
-        "scope": 1294,
-        "sourceUnit": 1207,
+        "scope": 1141,
+        "sourceUnit": 1054,
         "src": "26:20:4",
         "symbolAliases": [],
         "unitAlias": ""
@@ -145,30 +145,30 @@
         "contractKind": "contract",
         "documentation": null,
         "fullyImplemented": true,
-        "id": 1293,
+        "id": 1140,
         "linearizedBaseContracts": [
-          1293
+          1140
         ],
         "name": "User",
         "nodeType": "ContractDefinition",
         "nodes": [
           {
             "constant": false,
-            "id": 1213,
+            "id": 1060,
             "name": "users",
             "nodeType": "VariableDeclaration",
-            "scope": 1293,
+            "scope": 1140,
             "src": "66:40:4",
             "stateVariable": true,
             "storageLocation": "default",
             "typeDescriptions": {
-              "typeIdentifier": "t_mapping$_t_bytes32_$_t_struct$_Profile_$1226_storage_$",
+              "typeIdentifier": "t_mapping$_t_bytes32_$_t_struct$_Profile_$1073_storage_$",
               "typeString": "mapping(bytes32 => struct User.Profile)"
             },
             "typeName": {
-              "id": 1212,
+              "id": 1059,
               "keyType": {
-                "id": 1210,
+                "id": 1057,
                 "name": "bytes32",
                 "nodeType": "ElementaryTypeName",
                 "src": "74:7:4",
@@ -180,18 +180,18 @@
               "nodeType": "Mapping",
               "src": "66:27:4",
               "typeDescriptions": {
-                "typeIdentifier": "t_mapping$_t_bytes32_$_t_struct$_Profile_$1226_storage_$",
+                "typeIdentifier": "t_mapping$_t_bytes32_$_t_struct$_Profile_$1073_storage_$",
                 "typeString": "mapping(bytes32 => struct User.Profile)"
               },
               "valueType": {
                 "contractScope": null,
-                "id": 1211,
+                "id": 1058,
                 "name": "Profile",
                 "nodeType": "UserDefinedTypeName",
-                "referencedDeclaration": 1226,
+                "referencedDeclaration": 1073,
                 "src": "85:7:4",
                 "typeDescriptions": {
-                  "typeIdentifier": "t_struct$_Profile_$1226_storage_ptr",
+                  "typeIdentifier": "t_struct$_Profile_$1073_storage_ptr",
                   "typeString": "struct User.Profile"
                 }
               }
@@ -201,10 +201,10 @@
           },
           {
             "constant": false,
-            "id": 1217,
+            "id": 1064,
             "name": "emailId",
             "nodeType": "VariableDeclaration",
-            "scope": 1293,
+            "scope": 1140,
             "src": "110:39:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -213,9 +213,9 @@
               "typeString": "mapping(bytes32 => uint256)"
             },
             "typeName": {
-              "id": 1216,
+              "id": 1063,
               "keyType": {
-                "id": 1214,
+                "id": 1061,
                 "name": "bytes32",
                 "nodeType": "ElementaryTypeName",
                 "src": "118:7:4",
@@ -231,7 +231,7 @@
                 "typeString": "mapping(bytes32 => uint256)"
               },
               "valueType": {
-                "id": 1215,
+                "id": 1062,
                 "name": "uint",
                 "nodeType": "ElementaryTypeName",
                 "src": "129:4:4",
@@ -246,10 +246,10 @@
           },
           {
             "constant": false,
-            "id": 1219,
+            "id": 1066,
             "name": "usersCount",
             "nodeType": "VariableDeclaration",
-            "scope": 1293,
+            "scope": 1140,
             "src": "153:22:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -258,7 +258,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 1218,
+              "id": 1065,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "153:4:4",
@@ -272,14 +272,14 @@
           },
           {
             "canonicalName": "User.Profile",
-            "id": 1226,
+            "id": 1073,
             "members": [
               {
                 "constant": false,
-                "id": 1221,
+                "id": 1068,
                 "name": "id",
                 "nodeType": "VariableDeclaration",
-                "scope": 1226,
+                "scope": 1073,
                 "src": "201:10:4",
                 "stateVariable": false,
                 "storageLocation": "default",
@@ -288,7 +288,7 @@
                   "typeString": "address"
                 },
                 "typeName": {
-                  "id": 1220,
+                  "id": 1067,
                   "name": "address",
                   "nodeType": "ElementaryTypeName",
                   "src": "201:7:4",
@@ -302,10 +302,10 @@
               },
               {
                 "constant": false,
-                "id": 1223,
+                "id": 1070,
                 "name": "email",
                 "nodeType": "VariableDeclaration",
-                "scope": 1226,
+                "scope": 1073,
                 "src": "217:12:4",
                 "stateVariable": false,
                 "storageLocation": "default",
@@ -314,7 +314,7 @@
                   "typeString": "string"
                 },
                 "typeName": {
-                  "id": 1222,
+                  "id": 1069,
                   "name": "string",
                   "nodeType": "ElementaryTypeName",
                   "src": "217:6:4",
@@ -328,10 +328,10 @@
               },
               {
                 "constant": false,
-                "id": 1225,
+                "id": 1072,
                 "name": "since",
                 "nodeType": "VariableDeclaration",
-                "scope": 1226,
+                "scope": 1073,
                 "src": "235:10:4",
                 "stateVariable": false,
                 "storageLocation": "default",
@@ -340,7 +340,7 @@
                   "typeString": "uint256"
                 },
                 "typeName": {
-                  "id": 1224,
+                  "id": 1071,
                   "name": "uint",
                   "nodeType": "ElementaryTypeName",
                   "src": "235:4:4",
@@ -355,19 +355,19 @@
             ],
             "name": "Profile",
             "nodeType": "StructDefinition",
-            "scope": 1293,
+            "scope": 1140,
             "src": "180:70:4",
             "visibility": "public"
           },
           {
             "body": {
-              "id": 1229,
+              "id": 1076,
               "nodeType": "Block",
               "src": "276:2:4",
               "statements": []
             },
             "documentation": null,
-            "id": 1230,
+            "id": 1077,
             "implemented": true,
             "isConstructor": true,
             "isDeclaredConst": false,
@@ -375,19 +375,19 @@
             "name": "",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 1227,
+              "id": 1074,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "266:2:4"
             },
             "payable": false,
             "returnParameters": {
-              "id": 1228,
+              "id": 1075,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "276:0:4"
             },
-            "scope": 1293,
+            "scope": 1140,
             "src": "254:24:4",
             "stateMutability": "nonpayable",
             "superFunction": null,
@@ -395,21 +395,21 @@
           },
           {
             "body": {
-              "id": 1254,
+              "id": 1101,
               "nodeType": "Block",
               "src": "352:116:4",
               "statements": [
                 {
                   "assignments": [
-                    1238
+                    1085
                   ],
                   "declarations": [
                     {
                       "constant": false,
-                      "id": 1238,
+                      "id": 1085,
                       "name": "_emailId",
                       "nodeType": "VariableDeclaration",
-                      "scope": 1255,
+                      "scope": 1102,
                       "src": "358:13:4",
                       "stateVariable": false,
                       "storageLocation": "default",
@@ -418,7 +418,7 @@
                         "typeString": "uint256"
                       },
                       "typeName": {
-                        "id": 1237,
+                        "id": 1084,
                         "name": "uint",
                         "nodeType": "ElementaryTypeName",
                         "src": "358:4:4",
@@ -431,30 +431,30 @@
                       "visibility": "internal"
                     }
                   ],
-                  "id": 1242,
+                  "id": 1089,
                   "initialValue": {
                     "argumentTypes": null,
                     "baseExpression": {
                       "argumentTypes": null,
-                      "id": 1239,
+                      "id": 1086,
                       "name": "emailId",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 1217,
+                      "referencedDeclaration": 1064,
                       "src": "374:7:4",
                       "typeDescriptions": {
                         "typeIdentifier": "t_mapping$_t_bytes32_$_t_uint256_$",
                         "typeString": "mapping(bytes32 => uint256)"
                       }
                     },
-                    "id": 1241,
+                    "id": 1088,
                     "indexExpression": {
                       "argumentTypes": null,
-                      "id": 1240,
+                      "id": 1087,
                       "name": "_email",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 1232,
+                      "referencedDeclaration": 1079,
                       "src": "382:6:4",
                       "typeDescriptions": {
                         "typeIdentifier": "t_bytes32",
@@ -482,18 +482,18 @@
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
                     },
-                    "id": 1245,
+                    "id": 1092,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
                     "lValueRequested": false,
                     "leftExpression": {
                       "argumentTypes": null,
-                      "id": 1243,
+                      "id": 1090,
                       "name": "_emailId",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 1238,
+                      "referencedDeclaration": 1085,
                       "src": "400:8:4",
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint256",
@@ -505,7 +505,7 @@
                     "rightExpression": {
                       "argumentTypes": null,
                       "hexValue": "30",
-                      "id": 1244,
+                      "id": 1091,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": true,
@@ -527,11 +527,11 @@
                     }
                   },
                   "falseBody": null,
-                  "id": 1250,
+                  "id": 1097,
                   "nodeType": "IfStatement",
                   "src": "396:48:4",
                   "trueBody": {
-                    "id": 1249,
+                    "id": 1096,
                     "nodeType": "Block",
                     "src": "415:29:4",
                     "statements": [
@@ -542,7 +542,7 @@
                             {
                               "argumentTypes": null,
                               "hexValue": "66616c7365",
-                              "id": 1246,
+                              "id": 1093,
                               "isConstant": false,
                               "isLValue": false,
                               "isPure": true,
@@ -558,7 +558,7 @@
                               "value": "false"
                             }
                           ],
-                          "id": 1247,
+                          "id": 1094,
                           "isConstant": false,
                           "isInlineArray": false,
                           "isLValue": false,
@@ -571,8 +571,8 @@
                             "typeString": "bool"
                           }
                         },
-                        "functionReturnParameters": 1236,
-                        "id": 1248,
+                        "functionReturnParameters": 1083,
+                        "id": 1095,
                         "nodeType": "Return",
                         "src": "423:14:4"
                       }
@@ -586,7 +586,7 @@
                       {
                         "argumentTypes": null,
                         "hexValue": "74727565",
-                        "id": 1251,
+                        "id": 1098,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": true,
@@ -602,7 +602,7 @@
                         "value": "true"
                       }
                     ],
-                    "id": 1252,
+                    "id": 1099,
                     "isConstant": false,
                     "isInlineArray": false,
                     "isLValue": false,
@@ -615,15 +615,15 @@
                       "typeString": "bool"
                     }
                   },
-                  "functionReturnParameters": 1236,
-                  "id": 1253,
+                  "functionReturnParameters": 1083,
+                  "id": 1100,
                   "nodeType": "Return",
                   "src": "450:13:4"
                 }
               ]
             },
             "documentation": null,
-            "id": 1255,
+            "id": 1102,
             "implemented": true,
             "isConstructor": false,
             "isDeclaredConst": true,
@@ -631,15 +631,15 @@
             "name": "verifyCredentials",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 1233,
+              "id": 1080,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 1232,
+                  "id": 1079,
                   "name": "_email",
                   "nodeType": "VariableDeclaration",
-                  "scope": 1255,
+                  "scope": 1102,
                   "src": "309:14:4",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -648,7 +648,7 @@
                     "typeString": "bytes32"
                   },
                   "typeName": {
-                    "id": 1231,
+                    "id": 1078,
                     "name": "bytes32",
                     "nodeType": "ElementaryTypeName",
                     "src": "309:7:4",
@@ -665,15 +665,15 @@
             },
             "payable": false,
             "returnParameters": {
-              "id": 1236,
+              "id": 1083,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 1235,
+                  "id": 1082,
                   "name": "",
                   "nodeType": "VariableDeclaration",
-                  "scope": 1255,
+                  "scope": 1102,
                   "src": "346:4:4",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -682,7 +682,7 @@
                     "typeString": "bool"
                   },
                   "typeName": {
-                    "id": 1234,
+                    "id": 1081,
                     "name": "bool",
                     "nodeType": "ElementaryTypeName",
                     "src": "346:4:4",
@@ -697,7 +697,7 @@
               ],
               "src": "345:6:4"
             },
-            "scope": 1293,
+            "scope": 1140,
             "src": "282:186:4",
             "stateMutability": "view",
             "superFunction": null,
@@ -705,7 +705,7 @@
           },
           {
             "body": {
-              "id": 1291,
+              "id": 1138,
               "nodeType": "Block",
               "src": "514:200:4",
               "statements": [
@@ -719,7 +719,7 @@
                           "typeIdentifier": "t_uint256",
                           "typeString": "uint256"
                         },
-                        "id": 1265,
+                        "id": 1112,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": false,
@@ -728,25 +728,25 @@
                           "argumentTypes": null,
                           "baseExpression": {
                             "argumentTypes": null,
-                            "id": 1261,
+                            "id": 1108,
                             "name": "emailId",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 1217,
+                            "referencedDeclaration": 1064,
                             "src": "528:7:4",
                             "typeDescriptions": {
                               "typeIdentifier": "t_mapping$_t_bytes32_$_t_uint256_$",
                               "typeString": "mapping(bytes32 => uint256)"
                             }
                           },
-                          "id": 1263,
+                          "id": 1110,
                           "indexExpression": {
                             "argumentTypes": null,
-                            "id": 1262,
+                            "id": 1109,
                             "name": "_email",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 1257,
+                            "referencedDeclaration": 1104,
                             "src": "536:6:4",
                             "typeDescriptions": {
                               "typeIdentifier": "t_bytes32",
@@ -769,7 +769,7 @@
                         "rightExpression": {
                           "argumentTypes": null,
                           "hexValue": "30",
-                          "id": 1264,
+                          "id": 1111,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": true,
@@ -798,21 +798,21 @@
                           "typeString": "bool"
                         }
                       ],
-                      "id": 1260,
+                      "id": 1107,
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        1311,
-                        1312
+                        1158,
+                        1159
                       ],
-                      "referencedDeclaration": 1311,
+                      "referencedDeclaration": 1158,
                       "src": "520:7:4",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
                         "typeString": "function (bool) pure"
                       }
                     },
-                    "id": 1266,
+                    "id": 1113,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -826,14 +826,14 @@
                       "typeString": "tuple()"
                     }
                   },
-                  "id": 1267,
+                  "id": 1114,
                   "nodeType": "ExpressionStatement",
                   "src": "520:29:4"
                 },
                 {
                   "expression": {
                     "argumentTypes": null,
-                    "id": 1269,
+                    "id": 1116,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -844,11 +844,11 @@
                     "src": "555:12:4",
                     "subExpression": {
                       "argumentTypes": null,
-                      "id": 1268,
+                      "id": 1115,
                       "name": "usersCount",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 1219,
+                      "referencedDeclaration": 1066,
                       "src": "555:10:4",
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint256",
@@ -860,14 +860,14 @@
                       "typeString": "uint256"
                     }
                   },
-                  "id": 1270,
+                  "id": 1117,
                   "nodeType": "ExpressionStatement",
                   "src": "555:12:4"
                 },
                 {
                   "expression": {
                     "argumentTypes": null,
-                    "id": 1275,
+                    "id": 1122,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -876,25 +876,25 @@
                       "argumentTypes": null,
                       "baseExpression": {
                         "argumentTypes": null,
-                        "id": 1271,
+                        "id": 1118,
                         "name": "emailId",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 1217,
+                        "referencedDeclaration": 1064,
                         "src": "573:7:4",
                         "typeDescriptions": {
                           "typeIdentifier": "t_mapping$_t_bytes32_$_t_uint256_$",
                           "typeString": "mapping(bytes32 => uint256)"
                         }
                       },
-                      "id": 1273,
+                      "id": 1120,
                       "indexExpression": {
                         "argumentTypes": null,
-                        "id": 1272,
+                        "id": 1119,
                         "name": "_email",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 1257,
+                        "referencedDeclaration": 1104,
                         "src": "581:6:4",
                         "typeDescriptions": {
                           "typeIdentifier": "t_bytes32",
@@ -917,7 +917,7 @@
                     "rightHandSide": {
                       "argumentTypes": null,
                       "hexValue": "31",
-                      "id": 1274,
+                      "id": 1121,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": true,
@@ -938,14 +938,14 @@
                       "typeString": "uint256"
                     }
                   },
-                  "id": 1276,
+                  "id": 1123,
                   "nodeType": "ExpressionStatement",
                   "src": "573:19:4"
                 },
                 {
                   "expression": {
                     "argumentTypes": null,
-                    "id": 1289,
+                    "id": 1136,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -954,25 +954,25 @@
                       "argumentTypes": null,
                       "baseExpression": {
                         "argumentTypes": null,
-                        "id": 1277,
+                        "id": 1124,
                         "name": "users",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 1213,
+                        "referencedDeclaration": 1060,
                         "src": "598:5:4",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_mapping$_t_bytes32_$_t_struct$_Profile_$1226_storage_$",
+                          "typeIdentifier": "t_mapping$_t_bytes32_$_t_struct$_Profile_$1073_storage_$",
                           "typeString": "mapping(bytes32 => struct User.Profile storage ref)"
                         }
                       },
-                      "id": 1279,
+                      "id": 1126,
                       "indexExpression": {
                         "argumentTypes": null,
-                        "id": 1278,
+                        "id": 1125,
                         "name": "_email",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 1257,
+                        "referencedDeclaration": 1104,
                         "src": "604:6:4",
                         "typeDescriptions": {
                           "typeIdentifier": "t_bytes32",
@@ -986,7 +986,7 @@
                       "nodeType": "IndexAccess",
                       "src": "598:13:4",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_struct$_Profile_$1226_storage",
+                        "typeIdentifier": "t_struct$_Profile_$1073_storage",
                         "typeString": "struct User.Profile storage ref"
                       }
                     },
@@ -999,18 +999,18 @@
                           "argumentTypes": null,
                           "expression": {
                             "argumentTypes": null,
-                            "id": 1281,
+                            "id": 1128,
                             "name": "msg",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 1308,
+                            "referencedDeclaration": 1155,
                             "src": "634:3:4",
                             "typeDescriptions": {
                               "typeIdentifier": "t_magic_message",
                               "typeString": "msg"
                             }
                           },
-                          "id": 1282,
+                          "id": 1129,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": false,
@@ -1029,11 +1029,11 @@
                           "arguments": [
                             {
                               "argumentTypes": null,
-                              "id": 1285,
+                              "id": 1132,
                               "name": "_email",
                               "nodeType": "Identifier",
                               "overloadedDeclarations": [],
-                              "referencedDeclaration": 1257,
+                              "referencedDeclaration": 1104,
                               "src": "677:6:4",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_bytes32",
@@ -1050,32 +1050,32 @@
                             ],
                             "expression": {
                               "argumentTypes": null,
-                              "id": 1283,
+                              "id": 1130,
                               "name": "Type",
                               "nodeType": "Identifier",
                               "overloadedDeclarations": [],
-                              "referencedDeclaration": 1206,
+                              "referencedDeclaration": 1053,
                               "src": "659:4:4",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_type$_t_contract$_Type_$1206_$",
+                                "typeIdentifier": "t_type$_t_contract$_Type_$1053_$",
                                 "typeString": "type(library Type)"
                               }
                             },
-                            "id": 1284,
+                            "id": 1131,
                             "isConstant": false,
                             "isLValue": false,
                             "isPure": false,
                             "lValueRequested": false,
                             "memberName": "bytes32ToStr",
                             "nodeType": "MemberAccess",
-                            "referencedDeclaration": 1205,
+                            "referencedDeclaration": 1052,
                             "src": "659:17:4",
                             "typeDescriptions": {
                               "typeIdentifier": "t_function_delegatecall_pure$_t_bytes32_$returns$_t_string_memory_ptr_$",
                               "typeString": "function (bytes32) pure returns (string memory)"
                             }
                           },
-                          "id": 1286,
+                          "id": 1133,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": false,
@@ -1091,11 +1091,11 @@
                         },
                         {
                           "argumentTypes": null,
-                          "id": 1287,
+                          "id": 1134,
                           "name": "now",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 1310,
+                          "referencedDeclaration": 1157,
                           "src": "699:3:4",
                           "typeDescriptions": {
                             "typeIdentifier": "t_uint256",
@@ -1105,18 +1105,18 @@
                       ],
                       "expression": {
                         "argumentTypes": null,
-                        "id": 1280,
+                        "id": 1127,
                         "name": "Profile",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 1226,
+                        "referencedDeclaration": 1073,
                         "src": "614:7:4",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_type$_t_struct$_Profile_$1226_storage_ptr_$",
+                          "typeIdentifier": "t_type$_t_struct$_Profile_$1073_storage_ptr_$",
                           "typeString": "type(struct User.Profile storage pointer)"
                         }
                       },
-                      "id": 1288,
+                      "id": 1135,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": false,
@@ -1130,24 +1130,24 @@
                       "nodeType": "FunctionCall",
                       "src": "614:95:4",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_struct$_Profile_$1226_memory",
+                        "typeIdentifier": "t_struct$_Profile_$1073_memory",
                         "typeString": "struct User.Profile memory"
                       }
                     },
                     "src": "598:111:4",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_struct$_Profile_$1226_storage",
+                      "typeIdentifier": "t_struct$_Profile_$1073_storage",
                       "typeString": "struct User.Profile storage ref"
                     }
                   },
-                  "id": 1290,
+                  "id": 1137,
                   "nodeType": "ExpressionStatement",
                   "src": "598:111:4"
                 }
               ]
             },
             "documentation": null,
-            "id": 1292,
+            "id": 1139,
             "implemented": true,
             "isConstructor": false,
             "isDeclaredConst": false,
@@ -1155,15 +1155,15 @@
             "name": "loginUser",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 1258,
+              "id": 1105,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 1257,
+                  "id": 1104,
                   "name": "_email",
                   "nodeType": "VariableDeclaration",
-                  "scope": 1292,
+                  "scope": 1139,
                   "src": "491:14:4",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -1172,7 +1172,7 @@
                     "typeString": "bytes32"
                   },
                   "typeName": {
-                    "id": 1256,
+                    "id": 1103,
                     "name": "bytes32",
                     "nodeType": "ElementaryTypeName",
                     "src": "491:7:4",
@@ -1189,19 +1189,19 @@
             },
             "payable": false,
             "returnParameters": {
-              "id": 1259,
+              "id": 1106,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "514:0:4"
             },
-            "scope": 1293,
+            "scope": 1140,
             "src": "472:242:4",
             "stateMutability": "nonpayable",
             "superFunction": null,
             "visibility": "public"
           }
         ],
-        "scope": 1294,
+        "scope": 1141,
         "src": "48:668:4"
       }
     ],
@@ -1211,14 +1211,14 @@
     "absolutePath": "/Users/kangyi/Projects/react_bc_vote/contracts/User.sol",
     "exportedSymbols": {
       "User": [
-        1293
+        1140
       ]
     },
-    "id": 1294,
+    "id": 1141,
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 1208,
+        "id": 1055,
         "literals": [
           "solidity",
           "^",
@@ -1231,10 +1231,10 @@
       {
         "absolutePath": "/Users/kangyi/Projects/react_bc_vote/contracts/Type.sol",
         "file": "./Type.sol",
-        "id": 1209,
+        "id": 1056,
         "nodeType": "ImportDirective",
-        "scope": 1294,
-        "sourceUnit": 1207,
+        "scope": 1141,
+        "sourceUnit": 1054,
         "src": "26:20:4",
         "symbolAliases": [],
         "unitAlias": ""
@@ -1245,30 +1245,30 @@
         "contractKind": "contract",
         "documentation": null,
         "fullyImplemented": true,
-        "id": 1293,
+        "id": 1140,
         "linearizedBaseContracts": [
-          1293
+          1140
         ],
         "name": "User",
         "nodeType": "ContractDefinition",
         "nodes": [
           {
             "constant": false,
-            "id": 1213,
+            "id": 1060,
             "name": "users",
             "nodeType": "VariableDeclaration",
-            "scope": 1293,
+            "scope": 1140,
             "src": "66:40:4",
             "stateVariable": true,
             "storageLocation": "default",
             "typeDescriptions": {
-              "typeIdentifier": "t_mapping$_t_bytes32_$_t_struct$_Profile_$1226_storage_$",
+              "typeIdentifier": "t_mapping$_t_bytes32_$_t_struct$_Profile_$1073_storage_$",
               "typeString": "mapping(bytes32 => struct User.Profile)"
             },
             "typeName": {
-              "id": 1212,
+              "id": 1059,
               "keyType": {
-                "id": 1210,
+                "id": 1057,
                 "name": "bytes32",
                 "nodeType": "ElementaryTypeName",
                 "src": "74:7:4",
@@ -1280,18 +1280,18 @@
               "nodeType": "Mapping",
               "src": "66:27:4",
               "typeDescriptions": {
-                "typeIdentifier": "t_mapping$_t_bytes32_$_t_struct$_Profile_$1226_storage_$",
+                "typeIdentifier": "t_mapping$_t_bytes32_$_t_struct$_Profile_$1073_storage_$",
                 "typeString": "mapping(bytes32 => struct User.Profile)"
               },
               "valueType": {
                 "contractScope": null,
-                "id": 1211,
+                "id": 1058,
                 "name": "Profile",
                 "nodeType": "UserDefinedTypeName",
-                "referencedDeclaration": 1226,
+                "referencedDeclaration": 1073,
                 "src": "85:7:4",
                 "typeDescriptions": {
-                  "typeIdentifier": "t_struct$_Profile_$1226_storage_ptr",
+                  "typeIdentifier": "t_struct$_Profile_$1073_storage_ptr",
                   "typeString": "struct User.Profile"
                 }
               }
@@ -1301,10 +1301,10 @@
           },
           {
             "constant": false,
-            "id": 1217,
+            "id": 1064,
             "name": "emailId",
             "nodeType": "VariableDeclaration",
-            "scope": 1293,
+            "scope": 1140,
             "src": "110:39:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -1313,9 +1313,9 @@
               "typeString": "mapping(bytes32 => uint256)"
             },
             "typeName": {
-              "id": 1216,
+              "id": 1063,
               "keyType": {
-                "id": 1214,
+                "id": 1061,
                 "name": "bytes32",
                 "nodeType": "ElementaryTypeName",
                 "src": "118:7:4",
@@ -1331,7 +1331,7 @@
                 "typeString": "mapping(bytes32 => uint256)"
               },
               "valueType": {
-                "id": 1215,
+                "id": 1062,
                 "name": "uint",
                 "nodeType": "ElementaryTypeName",
                 "src": "129:4:4",
@@ -1346,10 +1346,10 @@
           },
           {
             "constant": false,
-            "id": 1219,
+            "id": 1066,
             "name": "usersCount",
             "nodeType": "VariableDeclaration",
-            "scope": 1293,
+            "scope": 1140,
             "src": "153:22:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -1358,7 +1358,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 1218,
+              "id": 1065,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "153:4:4",
@@ -1372,14 +1372,14 @@
           },
           {
             "canonicalName": "User.Profile",
-            "id": 1226,
+            "id": 1073,
             "members": [
               {
                 "constant": false,
-                "id": 1221,
+                "id": 1068,
                 "name": "id",
                 "nodeType": "VariableDeclaration",
-                "scope": 1226,
+                "scope": 1073,
                 "src": "201:10:4",
                 "stateVariable": false,
                 "storageLocation": "default",
@@ -1388,7 +1388,7 @@
                   "typeString": "address"
                 },
                 "typeName": {
-                  "id": 1220,
+                  "id": 1067,
                   "name": "address",
                   "nodeType": "ElementaryTypeName",
                   "src": "201:7:4",
@@ -1402,10 +1402,10 @@
               },
               {
                 "constant": false,
-                "id": 1223,
+                "id": 1070,
                 "name": "email",
                 "nodeType": "VariableDeclaration",
-                "scope": 1226,
+                "scope": 1073,
                 "src": "217:12:4",
                 "stateVariable": false,
                 "storageLocation": "default",
@@ -1414,7 +1414,7 @@
                   "typeString": "string"
                 },
                 "typeName": {
-                  "id": 1222,
+                  "id": 1069,
                   "name": "string",
                   "nodeType": "ElementaryTypeName",
                   "src": "217:6:4",
@@ -1428,10 +1428,10 @@
               },
               {
                 "constant": false,
-                "id": 1225,
+                "id": 1072,
                 "name": "since",
                 "nodeType": "VariableDeclaration",
-                "scope": 1226,
+                "scope": 1073,
                 "src": "235:10:4",
                 "stateVariable": false,
                 "storageLocation": "default",
@@ -1440,7 +1440,7 @@
                   "typeString": "uint256"
                 },
                 "typeName": {
-                  "id": 1224,
+                  "id": 1071,
                   "name": "uint",
                   "nodeType": "ElementaryTypeName",
                   "src": "235:4:4",
@@ -1455,19 +1455,19 @@
             ],
             "name": "Profile",
             "nodeType": "StructDefinition",
-            "scope": 1293,
+            "scope": 1140,
             "src": "180:70:4",
             "visibility": "public"
           },
           {
             "body": {
-              "id": 1229,
+              "id": 1076,
               "nodeType": "Block",
               "src": "276:2:4",
               "statements": []
             },
             "documentation": null,
-            "id": 1230,
+            "id": 1077,
             "implemented": true,
             "isConstructor": true,
             "isDeclaredConst": false,
@@ -1475,19 +1475,19 @@
             "name": "",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 1227,
+              "id": 1074,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "266:2:4"
             },
             "payable": false,
             "returnParameters": {
-              "id": 1228,
+              "id": 1075,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "276:0:4"
             },
-            "scope": 1293,
+            "scope": 1140,
             "src": "254:24:4",
             "stateMutability": "nonpayable",
             "superFunction": null,
@@ -1495,21 +1495,21 @@
           },
           {
             "body": {
-              "id": 1254,
+              "id": 1101,
               "nodeType": "Block",
               "src": "352:116:4",
               "statements": [
                 {
                   "assignments": [
-                    1238
+                    1085
                   ],
                   "declarations": [
                     {
                       "constant": false,
-                      "id": 1238,
+                      "id": 1085,
                       "name": "_emailId",
                       "nodeType": "VariableDeclaration",
-                      "scope": 1255,
+                      "scope": 1102,
                       "src": "358:13:4",
                       "stateVariable": false,
                       "storageLocation": "default",
@@ -1518,7 +1518,7 @@
                         "typeString": "uint256"
                       },
                       "typeName": {
-                        "id": 1237,
+                        "id": 1084,
                         "name": "uint",
                         "nodeType": "ElementaryTypeName",
                         "src": "358:4:4",
@@ -1531,30 +1531,30 @@
                       "visibility": "internal"
                     }
                   ],
-                  "id": 1242,
+                  "id": 1089,
                   "initialValue": {
                     "argumentTypes": null,
                     "baseExpression": {
                       "argumentTypes": null,
-                      "id": 1239,
+                      "id": 1086,
                       "name": "emailId",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 1217,
+                      "referencedDeclaration": 1064,
                       "src": "374:7:4",
                       "typeDescriptions": {
                         "typeIdentifier": "t_mapping$_t_bytes32_$_t_uint256_$",
                         "typeString": "mapping(bytes32 => uint256)"
                       }
                     },
-                    "id": 1241,
+                    "id": 1088,
                     "indexExpression": {
                       "argumentTypes": null,
-                      "id": 1240,
+                      "id": 1087,
                       "name": "_email",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 1232,
+                      "referencedDeclaration": 1079,
                       "src": "382:6:4",
                       "typeDescriptions": {
                         "typeIdentifier": "t_bytes32",
@@ -1582,18 +1582,18 @@
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
                     },
-                    "id": 1245,
+                    "id": 1092,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
                     "lValueRequested": false,
                     "leftExpression": {
                       "argumentTypes": null,
-                      "id": 1243,
+                      "id": 1090,
                       "name": "_emailId",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 1238,
+                      "referencedDeclaration": 1085,
                       "src": "400:8:4",
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint256",
@@ -1605,7 +1605,7 @@
                     "rightExpression": {
                       "argumentTypes": null,
                       "hexValue": "30",
-                      "id": 1244,
+                      "id": 1091,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": true,
@@ -1627,11 +1627,11 @@
                     }
                   },
                   "falseBody": null,
-                  "id": 1250,
+                  "id": 1097,
                   "nodeType": "IfStatement",
                   "src": "396:48:4",
                   "trueBody": {
-                    "id": 1249,
+                    "id": 1096,
                     "nodeType": "Block",
                     "src": "415:29:4",
                     "statements": [
@@ -1642,7 +1642,7 @@
                             {
                               "argumentTypes": null,
                               "hexValue": "66616c7365",
-                              "id": 1246,
+                              "id": 1093,
                               "isConstant": false,
                               "isLValue": false,
                               "isPure": true,
@@ -1658,7 +1658,7 @@
                               "value": "false"
                             }
                           ],
-                          "id": 1247,
+                          "id": 1094,
                           "isConstant": false,
                           "isInlineArray": false,
                           "isLValue": false,
@@ -1671,8 +1671,8 @@
                             "typeString": "bool"
                           }
                         },
-                        "functionReturnParameters": 1236,
-                        "id": 1248,
+                        "functionReturnParameters": 1083,
+                        "id": 1095,
                         "nodeType": "Return",
                         "src": "423:14:4"
                       }
@@ -1686,7 +1686,7 @@
                       {
                         "argumentTypes": null,
                         "hexValue": "74727565",
-                        "id": 1251,
+                        "id": 1098,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": true,
@@ -1702,7 +1702,7 @@
                         "value": "true"
                       }
                     ],
-                    "id": 1252,
+                    "id": 1099,
                     "isConstant": false,
                     "isInlineArray": false,
                     "isLValue": false,
@@ -1715,15 +1715,15 @@
                       "typeString": "bool"
                     }
                   },
-                  "functionReturnParameters": 1236,
-                  "id": 1253,
+                  "functionReturnParameters": 1083,
+                  "id": 1100,
                   "nodeType": "Return",
                   "src": "450:13:4"
                 }
               ]
             },
             "documentation": null,
-            "id": 1255,
+            "id": 1102,
             "implemented": true,
             "isConstructor": false,
             "isDeclaredConst": true,
@@ -1731,15 +1731,15 @@
             "name": "verifyCredentials",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 1233,
+              "id": 1080,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 1232,
+                  "id": 1079,
                   "name": "_email",
                   "nodeType": "VariableDeclaration",
-                  "scope": 1255,
+                  "scope": 1102,
                   "src": "309:14:4",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -1748,7 +1748,7 @@
                     "typeString": "bytes32"
                   },
                   "typeName": {
-                    "id": 1231,
+                    "id": 1078,
                     "name": "bytes32",
                     "nodeType": "ElementaryTypeName",
                     "src": "309:7:4",
@@ -1765,15 +1765,15 @@
             },
             "payable": false,
             "returnParameters": {
-              "id": 1236,
+              "id": 1083,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 1235,
+                  "id": 1082,
                   "name": "",
                   "nodeType": "VariableDeclaration",
-                  "scope": 1255,
+                  "scope": 1102,
                   "src": "346:4:4",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -1782,7 +1782,7 @@
                     "typeString": "bool"
                   },
                   "typeName": {
-                    "id": 1234,
+                    "id": 1081,
                     "name": "bool",
                     "nodeType": "ElementaryTypeName",
                     "src": "346:4:4",
@@ -1797,7 +1797,7 @@
               ],
               "src": "345:6:4"
             },
-            "scope": 1293,
+            "scope": 1140,
             "src": "282:186:4",
             "stateMutability": "view",
             "superFunction": null,
@@ -1805,7 +1805,7 @@
           },
           {
             "body": {
-              "id": 1291,
+              "id": 1138,
               "nodeType": "Block",
               "src": "514:200:4",
               "statements": [
@@ -1819,7 +1819,7 @@
                           "typeIdentifier": "t_uint256",
                           "typeString": "uint256"
                         },
-                        "id": 1265,
+                        "id": 1112,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": false,
@@ -1828,25 +1828,25 @@
                           "argumentTypes": null,
                           "baseExpression": {
                             "argumentTypes": null,
-                            "id": 1261,
+                            "id": 1108,
                             "name": "emailId",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 1217,
+                            "referencedDeclaration": 1064,
                             "src": "528:7:4",
                             "typeDescriptions": {
                               "typeIdentifier": "t_mapping$_t_bytes32_$_t_uint256_$",
                               "typeString": "mapping(bytes32 => uint256)"
                             }
                           },
-                          "id": 1263,
+                          "id": 1110,
                           "indexExpression": {
                             "argumentTypes": null,
-                            "id": 1262,
+                            "id": 1109,
                             "name": "_email",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 1257,
+                            "referencedDeclaration": 1104,
                             "src": "536:6:4",
                             "typeDescriptions": {
                               "typeIdentifier": "t_bytes32",
@@ -1869,7 +1869,7 @@
                         "rightExpression": {
                           "argumentTypes": null,
                           "hexValue": "30",
-                          "id": 1264,
+                          "id": 1111,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": true,
@@ -1898,21 +1898,21 @@
                           "typeString": "bool"
                         }
                       ],
-                      "id": 1260,
+                      "id": 1107,
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        1311,
-                        1312
+                        1158,
+                        1159
                       ],
-                      "referencedDeclaration": 1311,
+                      "referencedDeclaration": 1158,
                       "src": "520:7:4",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
                         "typeString": "function (bool) pure"
                       }
                     },
-                    "id": 1266,
+                    "id": 1113,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -1926,14 +1926,14 @@
                       "typeString": "tuple()"
                     }
                   },
-                  "id": 1267,
+                  "id": 1114,
                   "nodeType": "ExpressionStatement",
                   "src": "520:29:4"
                 },
                 {
                   "expression": {
                     "argumentTypes": null,
-                    "id": 1269,
+                    "id": 1116,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -1944,11 +1944,11 @@
                     "src": "555:12:4",
                     "subExpression": {
                       "argumentTypes": null,
-                      "id": 1268,
+                      "id": 1115,
                       "name": "usersCount",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 1219,
+                      "referencedDeclaration": 1066,
                       "src": "555:10:4",
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint256",
@@ -1960,14 +1960,14 @@
                       "typeString": "uint256"
                     }
                   },
-                  "id": 1270,
+                  "id": 1117,
                   "nodeType": "ExpressionStatement",
                   "src": "555:12:4"
                 },
                 {
                   "expression": {
                     "argumentTypes": null,
-                    "id": 1275,
+                    "id": 1122,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -1976,25 +1976,25 @@
                       "argumentTypes": null,
                       "baseExpression": {
                         "argumentTypes": null,
-                        "id": 1271,
+                        "id": 1118,
                         "name": "emailId",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 1217,
+                        "referencedDeclaration": 1064,
                         "src": "573:7:4",
                         "typeDescriptions": {
                           "typeIdentifier": "t_mapping$_t_bytes32_$_t_uint256_$",
                           "typeString": "mapping(bytes32 => uint256)"
                         }
                       },
-                      "id": 1273,
+                      "id": 1120,
                       "indexExpression": {
                         "argumentTypes": null,
-                        "id": 1272,
+                        "id": 1119,
                         "name": "_email",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 1257,
+                        "referencedDeclaration": 1104,
                         "src": "581:6:4",
                         "typeDescriptions": {
                           "typeIdentifier": "t_bytes32",
@@ -2017,7 +2017,7 @@
                     "rightHandSide": {
                       "argumentTypes": null,
                       "hexValue": "31",
-                      "id": 1274,
+                      "id": 1121,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": true,
@@ -2038,14 +2038,14 @@
                       "typeString": "uint256"
                     }
                   },
-                  "id": 1276,
+                  "id": 1123,
                   "nodeType": "ExpressionStatement",
                   "src": "573:19:4"
                 },
                 {
                   "expression": {
                     "argumentTypes": null,
-                    "id": 1289,
+                    "id": 1136,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -2054,25 +2054,25 @@
                       "argumentTypes": null,
                       "baseExpression": {
                         "argumentTypes": null,
-                        "id": 1277,
+                        "id": 1124,
                         "name": "users",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 1213,
+                        "referencedDeclaration": 1060,
                         "src": "598:5:4",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_mapping$_t_bytes32_$_t_struct$_Profile_$1226_storage_$",
+                          "typeIdentifier": "t_mapping$_t_bytes32_$_t_struct$_Profile_$1073_storage_$",
                           "typeString": "mapping(bytes32 => struct User.Profile storage ref)"
                         }
                       },
-                      "id": 1279,
+                      "id": 1126,
                       "indexExpression": {
                         "argumentTypes": null,
-                        "id": 1278,
+                        "id": 1125,
                         "name": "_email",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 1257,
+                        "referencedDeclaration": 1104,
                         "src": "604:6:4",
                         "typeDescriptions": {
                           "typeIdentifier": "t_bytes32",
@@ -2086,7 +2086,7 @@
                       "nodeType": "IndexAccess",
                       "src": "598:13:4",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_struct$_Profile_$1226_storage",
+                        "typeIdentifier": "t_struct$_Profile_$1073_storage",
                         "typeString": "struct User.Profile storage ref"
                       }
                     },
@@ -2099,18 +2099,18 @@
                           "argumentTypes": null,
                           "expression": {
                             "argumentTypes": null,
-                            "id": 1281,
+                            "id": 1128,
                             "name": "msg",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 1308,
+                            "referencedDeclaration": 1155,
                             "src": "634:3:4",
                             "typeDescriptions": {
                               "typeIdentifier": "t_magic_message",
                               "typeString": "msg"
                             }
                           },
-                          "id": 1282,
+                          "id": 1129,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": false,
@@ -2129,11 +2129,11 @@
                           "arguments": [
                             {
                               "argumentTypes": null,
-                              "id": 1285,
+                              "id": 1132,
                               "name": "_email",
                               "nodeType": "Identifier",
                               "overloadedDeclarations": [],
-                              "referencedDeclaration": 1257,
+                              "referencedDeclaration": 1104,
                               "src": "677:6:4",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_bytes32",
@@ -2150,32 +2150,32 @@
                             ],
                             "expression": {
                               "argumentTypes": null,
-                              "id": 1283,
+                              "id": 1130,
                               "name": "Type",
                               "nodeType": "Identifier",
                               "overloadedDeclarations": [],
-                              "referencedDeclaration": 1206,
+                              "referencedDeclaration": 1053,
                               "src": "659:4:4",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_type$_t_contract$_Type_$1206_$",
+                                "typeIdentifier": "t_type$_t_contract$_Type_$1053_$",
                                 "typeString": "type(library Type)"
                               }
                             },
-                            "id": 1284,
+                            "id": 1131,
                             "isConstant": false,
                             "isLValue": false,
                             "isPure": false,
                             "lValueRequested": false,
                             "memberName": "bytes32ToStr",
                             "nodeType": "MemberAccess",
-                            "referencedDeclaration": 1205,
+                            "referencedDeclaration": 1052,
                             "src": "659:17:4",
                             "typeDescriptions": {
                               "typeIdentifier": "t_function_delegatecall_pure$_t_bytes32_$returns$_t_string_memory_ptr_$",
                               "typeString": "function (bytes32) pure returns (string memory)"
                             }
                           },
-                          "id": 1286,
+                          "id": 1133,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": false,
@@ -2191,11 +2191,11 @@
                         },
                         {
                           "argumentTypes": null,
-                          "id": 1287,
+                          "id": 1134,
                           "name": "now",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 1310,
+                          "referencedDeclaration": 1157,
                           "src": "699:3:4",
                           "typeDescriptions": {
                             "typeIdentifier": "t_uint256",
@@ -2205,18 +2205,18 @@
                       ],
                       "expression": {
                         "argumentTypes": null,
-                        "id": 1280,
+                        "id": 1127,
                         "name": "Profile",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 1226,
+                        "referencedDeclaration": 1073,
                         "src": "614:7:4",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_type$_t_struct$_Profile_$1226_storage_ptr_$",
+                          "typeIdentifier": "t_type$_t_struct$_Profile_$1073_storage_ptr_$",
                           "typeString": "type(struct User.Profile storage pointer)"
                         }
                       },
-                      "id": 1288,
+                      "id": 1135,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": false,
@@ -2230,24 +2230,24 @@
                       "nodeType": "FunctionCall",
                       "src": "614:95:4",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_struct$_Profile_$1226_memory",
+                        "typeIdentifier": "t_struct$_Profile_$1073_memory",
                         "typeString": "struct User.Profile memory"
                       }
                     },
                     "src": "598:111:4",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_struct$_Profile_$1226_storage",
+                      "typeIdentifier": "t_struct$_Profile_$1073_storage",
                       "typeString": "struct User.Profile storage ref"
                     }
                   },
-                  "id": 1290,
+                  "id": 1137,
                   "nodeType": "ExpressionStatement",
                   "src": "598:111:4"
                 }
               ]
             },
             "documentation": null,
-            "id": 1292,
+            "id": 1139,
             "implemented": true,
             "isConstructor": false,
             "isDeclaredConst": false,
@@ -2255,15 +2255,15 @@
             "name": "loginUser",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 1258,
+              "id": 1105,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 1257,
+                  "id": 1104,
                   "name": "_email",
                   "nodeType": "VariableDeclaration",
-                  "scope": 1292,
+                  "scope": 1139,
                   "src": "491:14:4",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -2272,7 +2272,7 @@
                     "typeString": "bytes32"
                   },
                   "typeName": {
-                    "id": 1256,
+                    "id": 1103,
                     "name": "bytes32",
                     "nodeType": "ElementaryTypeName",
                     "src": "491:7:4",
@@ -2289,19 +2289,19 @@
             },
             "payable": false,
             "returnParameters": {
-              "id": 1259,
+              "id": 1106,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "514:0:4"
             },
-            "scope": 1293,
+            "scope": 1140,
             "src": "472:242:4",
             "stateMutability": "nonpayable",
             "superFunction": null,
             "visibility": "public"
           }
         ],
-        "scope": 1294,
+        "scope": 1141,
         "src": "48:668:4"
       }
     ],
@@ -2313,5 +2313,5 @@
   },
   "networks": {},
   "schemaVersion": "2.0.1",
-  "updatedAt": "2018-10-26T16:01:10.429Z"
+  "updatedAt": "2018-11-02T04:53:10.286Z"
 }

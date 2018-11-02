@@ -6,6 +6,7 @@ import TruffleContract from 'truffle-contract';
 import getWeb3 from "./utils/getWeb3";
 import Routes from "./routes";
 import * as moment from 'moment';
+import { BackTop, Icon, Button, Spin } from 'antd';
 
 import { EMAIL_ENDPOINT } from './utils/config';
 
@@ -87,7 +88,11 @@ class App extends Component {
 
   render() {
     if (this.state.fetching) {
-      return <div>Loading...</div>;
+      return (
+        <div className="loading-cover">
+          <Spin />
+        </div>
+      );
     }
     if (!this.state.web3) {
       return <div>Please install the metamask and login with the valid accounts...</div>
@@ -96,6 +101,9 @@ class App extends Component {
     return (
       <Router>
         <div>
+          <BackTop className="back-top-custom" visibilityHeight={200}>
+            <Button type="primary" ghost shape="circle" icon="to-top" size="large" />
+          </BackTop>
           <Routes {...this.props} state={this.state} />
         </div>
       </Router>

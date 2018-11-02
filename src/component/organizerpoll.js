@@ -1,5 +1,6 @@
-import React, { Component } from "react";import * as moment from 'moment';
-import { Breadcrumb } from 'antd';
+import React, { Component } from "react";
+import * as moment from 'moment';
+import { Breadcrumb, Card, Spin } from 'antd';
 import { Link } from "react-router-dom";
 
 export default class OrganizerPoll extends Component {
@@ -9,14 +10,14 @@ export default class OrganizerPoll extends Component {
       ...this.props.state,
       electionInfo: {
         title: "",
-        mode: 0,
+        isPublic: 0,
         candidates: [],
-        manual: false,
-        status: null,
+        isManual: false,
+        status: 0,
         start: 0,
         end: 0
       },
-      fetchingContent: false,
+      submitting: false,
       candidates: []
     };
   }
@@ -31,106 +32,82 @@ export default class OrganizerPoll extends Component {
 
     await this.fetchElectionContent();
     await this.listenVoteEvent();
-    await this.listenStartedElectionEvent();
-    await this.listenClosedElectionEvent();
   }
   componentWillUnmount = async() => {
     await this.setState({ unmounted: true });
   }
 
-  listenStartedElectionEvent = async() => {
-    const { election } = this.state.contract;
-    const { web3 } = this.state;
-
-    const latestBlock = await web3.eth.getBlockNumber();
-    election.startedElection().watch((err, response) => {
-      if (response.blockNumber > latestBlock) {
-        this.fetchElectionContent();
-      }
-    });
-  }
-  listenClosedElectionEvent = async() => {
-    const { election } = this.state.contract;
-    const { web3 } = this.state;
-
-    const latestBlock = await web3.eth.getBlockNumber();
-    election.closedElection().watch((err, response) => {
-      if (response.blockNumber > latestBlock) {
-        this.fetchElectionContent();
-      }
-    });
-  }
-
   listenVoteEvent = async() => {
+    const { electionId } = this.props.match.params;
     const { election } = this.state.contract;
     const { web3 } = this.state;
 
     const latestBlock = await web3.eth.getBlockNumber();
     election.votedEvent().watch((err, response) => {
       if (response.blockNumber > latestBlock) {
-        this.fetchElectionContent();
+        const { addr } = response;
+
+        if (addr === electionId) {
+          this.fetchElectionContent();
+        }
       }
     });
   }
 
-  startElection = async(e) => {
-    e.preventDefault();
-    const { email, electionId } = this.props.match.params;
-    const { election } = this.state.contract;
-    const { accounts } = this.state.user;
-
-    this.setState({ fetching: true });
-
-    try {
-      await election.start(electionId, email, { from: accounts[0] });
-    } catch (err) {
-      console.log(err);
-      this.setState({ fetching: false });
-    }
-  }
   closeElection = async(e) => {
     e.preventDefault();
     const { email, electionId } = this.props.match.params;
     const { election } = this.state.contract;
     const { accounts } = this.state.user;
 
-    this.setState({ fetching: true });
+    this.setState({ submitting: true });
 
     try {
       await election.close(electionId, email, { from: accounts[0] });
+      this.setState({ submitting: false });
+      this.fetchElectionContent();
     } catch (err) {
-      this.setState({ fetching: false });
+      this.setState({ submitting: false });
     }
   }
 
   compareDate = async() => {
-    const { end } = this.state.electionInfo;
-    const status = (moment().unix() >= end) ? 1 : 0;
-    if (status) {
+    const { start, end, status } = this.state.electionInfo;
+    if (status === 1) {
       await this.setState({ electionInfo: { ...this.state.electionInfo, status } });
+      return;
+    }
+    const curStatus = (moment().unix() < start) ? 2 : (end !== 0 && moment().unix() >= end) ? 1 : 0;
+
+    if (status !== 0 && curStatus === 0) {
+      this.fetchElectionContent();
+    }
+
+    if (curStatus === 1) {
+      this.fetchElectionContent();
       return;
     }
     setTimeout(this.compareDate, 1000);
   }
 
   fetchElectionContent = async() => {
-    this.setState({ fetchingContent: true });
+    this.setState({ fetching: true });
     const { electionId } = this.props.match.params;
     const { election } = this.state.contract;
 
     const title = await election.getTitle(electionId);
-    const mode = await election.getMode(electionId);
-    const manual = await election.isManual(electionId);
+    const isPublic = await election.getMode(electionId);
     const start = await election.getStartDate(electionId);
-    if (manual) {
-      const res = await election.getStatus(electionId);
-      this.setState({ electionInfo: { ...this.state.electionInfo, start: start.toNumber(), status: res.toNumber() }  })
+    const end = await election.getEndDate(electionId);
+    if (end.toNumber() === 0) {
+      const status = (moment().unix() < start) ? 2 : 0;
+      this.setState({ electionInfo: { ...this.state.electionInfo, start: start.toNumber(), isManual: true, status: 0 }  })
+      if (status === 2) this.compareDate();
     } else {
       // Compare date
-      const end = await election.getEndDate(electionId);
-      const status = (moment().unix() >= end) ? 1 : 0;
-      this.setState({ electionInfo: { ...this.state.electionInfo, start, end: end.toNumber(), status } })
-      if (!status) this.compareDate();
+      const status = (moment().unix() < start) ? 2 : (moment().unix() >= end) ? 1 : 0;
+      this.setState({ electionInfo: { ...this.state.electionInfo, start: start.toNumber(), end: end.toNumber(), status } })
+      if (status !== 1) this.compareDate();
     }
     const candSize = await election.getCandidateSize(electionId);
 
@@ -143,22 +120,11 @@ export default class OrganizerPoll extends Component {
     }
 
     this.setState({ electionInfo: {
-      ...this.state.electionInfo, title, candidates, manual, mode
-    }, fetchingContent: false });
+      ...this.state.electionInfo, title, candidates, isPublic: isPublic.toNumber()
+    }, fetching: false });
   }
 
   render() {
-    if (this.state.fetching) {
-      return (
-        <div>Loading...</div>
-      );
-    }
-
-    const StartButton = () => {
-      return (
-        <button onClick={this.startElection}>Start</button>
-      )
-    };
     const CloseButton = () => {
       return (
         <button onClick={this.closeElection}>Close</button>
@@ -170,18 +136,17 @@ export default class OrganizerPoll extends Component {
       )
     };
 
-    const { electionInfo, fetchingContent } = this.state;
+    const { electionInfo, fetching, submitting } = this.state;
     const { userId, email } = this.props.match.params;
 
     const contentbody = (
       <div>
-        <div>{ "Poll:" + electionInfo.title }</div>
-        <div>{ "Mode:" + ((electionInfo.mode === 0) ? "Private" : "Public") }</div>
+        <div>{ "Poll: " + electionInfo.title }</div>
+        <div>{ "Mode: " + ((electionInfo.isPublic === 0) ? "Private" : "Public") }</div>
         <div>{ "Start date: " + ((electionInfo.start !== 0) ? moment.unix(electionInfo.start).format('MMMM Do YYYY, h:mm:ss a') : "----") }</div>
         <div>{ "End date: " + ((electionInfo.end !== 0) ? moment.unix(electionInfo.end).format('MMMM Do YYYY, h:mm:ss a') : "----") }</div>
         { electionInfo.candidates }
-        { (electionInfo.manual && electionInfo.status === 2) && <StartButton /> }
-        { (electionInfo.manual && electionInfo.status === 0) && <CloseButton /> }
+        { (electionInfo.isManual && electionInfo.status === 0) && <CloseButton /> }
         { electionInfo.status === 1 && <ResultContent /> }
       </div>
     )
@@ -189,12 +154,14 @@ export default class OrganizerPoll extends Component {
     return (
       <div>
         <Breadcrumb style={{ margin: '16px 0' }}>
-          <Breadcrumb.Item><Link to={ "/" + userId + "/" + email + "/organizer" }>Home</Link></Breadcrumb.Item>
+          <Breadcrumb.Item><Link to={ "/" + userId + "/" + email + "/organizer" }>Dashboard</Link></Breadcrumb.Item>
           <Breadcrumb.Item>{electionInfo.title}</Breadcrumb.Item>
         </Breadcrumb>
-        <div style={{ background: '#fff', padding: 24, margin: 0, minHeight: 280 }}>
-          { (!fetchingContent && contentbody) || "Loading..." }
-        </div>
+        <Spin spinning={submitting}>
+          <Card style={{ minHeight: '200px' }} loading={fetching} bordered={false}>
+            { contentbody }
+          </Card>
+        </Spin>
       </div>
     );
   }

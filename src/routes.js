@@ -10,6 +10,7 @@ import OrganizerCreate from "./component/organizercreate";
 import OrganizerPoll from "./component/organizerpoll";
 import AuthNavigation from "./component/AuthNavigation";
 import NotFound from "./component/404";
+import CreateVote from './component/organizercreate';
 
 
 class Routes extends Component {
@@ -37,12 +38,13 @@ class Routes extends Component {
       <Switch>
         <Route exact path="/" render={(props)=><Home {...props} state={this.state} />} />
         <Route exact path="/login/:email/:role/:token" render={(props)=><Login {...props} state={this.state} />} />
+        <Route exact path="/login/voter/:email/:token/:addr" render={(props)=><Login {...props} state={this.state} />} />
         <Route exact path="/logout" component={Logout} />
         <Route exact path="/:userId/:email/voter" render={(props)=><Nav navigation={AuthNavigation} component={Voter} {...props} state={this.state} />} />
         <Route exact path="/:userId/:email/voter/:electionId" render={(props)=><Nav navigation={AuthNavigation} component={VoterPoll} {...props} state={this.state} />} />
         <Route exact path="/:userId/:email/organizer" render={(props)=><Nav navigation={AuthNavigation} component={Organizer} {...props} state={this.state} />} />
-        <Route exact path="/:userId/:email/organizer/create" render={(props)=><Nav navigation={AuthNavigation} component={OrganizerCreate} {...props} state={this.state} />} />
-        <Route exact path="/:userId/:email/organizer/:electionId" render={(props)=><Nav navigation={AuthNavigation} component={OrganizerPoll} {...props} state={this.state} />} />
+        <Route exact path="/:userId/:email/organizer/create" render={(props)=><Nav navigation={AuthNavigation} component={CreateVote} {...props} state={this.state} />} />
+        <Route exact path="/:userId/:email/organizer/:electionId/vote-info" render={(props)=><Nav navigation={AuthNavigation} component={OrganizerPoll} {...props} state={this.state} />} />
         <Route path="/404" render={(props)=><NotFound {...props} state={this.state} />} />
         <Redirect from="*" to="/404" />
       </Switch>

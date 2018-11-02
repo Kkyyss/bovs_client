@@ -11,8 +11,9 @@ export default class VoterPoll extends Component {
       electionInfo: {
         title: "",
         candidates: [],
-        manual: false,
-        status: null,
+        isPublic: 0,
+        isManual: false,
+        status: 0,
         winner: null,
         start: 0,
         end: 0
@@ -58,12 +59,25 @@ export default class VoterPoll extends Component {
   compareDate = async() => {
     const { start, end, status } = this.state.electionInfo;
     if (status === 1) return;
-    const curStatus = (moment().unix() < start) ? 2 : (moment().unix() >= end) ? 1 : 0;
+    const curStatus = (moment().unix() < start) ? 2 : (end !== 0 && moment().unix() >= end) ? 1 : 0;
 
-    const interval = 1000;
+    if (status !== 0 && curStatus === 0) {
+      this.setState({ electionInfo: {
+        ...this.state.electionInfo,
+        status: curStatus
+      }})
+
+      if (end === 0) {
+        return;
+      }
+    }
+
     if (curStatus === 1) {
-      await this.fetchWinner();
-      await this.setState({ electionInfo: { ...this.state.electionInfo, status: curStatus } });
+      await this.setState({ electionInfo: {
+        ...this.state.electionInfo,
+        status: curStatus
+      }})
+      this.fetchWinner();
       return;
     }
     setTimeout(this.compareDate, 1000);
@@ -75,19 +89,19 @@ export default class VoterPoll extends Component {
     const { election } = this.state.contract;
 
     const isVoted = await election.isVoted(electionId, email);
-    const manual = await election.isManual(electionId);
+    const isPublic = await election.getMode(electionId);
     const start = await election.getStartDate(electionId);
-    console.log(start)
+    const end = await election.getEndDate(electionId);
 
-    await this.setState({ electionInfo: { ...this.state.electionInfo, manual, start }, voter: { ...this.state.voter, voted: isVoted } });
-    if (manual) {
-      const res = await election.getStatus(electionId);
-      await this.setState({ electionInfo: { ...this.state.electionInfo, status: res.toNumber() } });
+    await this.setState({ electionInfo: { ...this.state.electionInfo, start: start.toNumber() }, voter: { ...this.state.voter, voted: isVoted } });
+    if (end.toNumber() === 0) {
+      const status = (moment().unix() < start) ? 2 : 0;
+      await this.setState({ electionInfo: { ...this.state.electionInfo, isManual: true, status } });
+      if (status === 2) this.compareDate();
     } else {
-      const end = await election.getEndDate(electionId);
       const status = (moment().unix() < start) ? 2 : (moment().unix() >= end) ? 1 : 0;
-      await this.setState({ electionInfo: { ...this.state.electionInfo, end, status } })
-      if (!status) this.compareDate();
+      await this.setState({ electionInfo: { ...this.state.electionInfo, end: end.toNumber(), status } })
+      if (status !== 1) this.compareDate();
     }
     if (this.state.electionInfo.status === 1) {
       await this.fetchWinner();
@@ -105,7 +119,7 @@ export default class VoterPoll extends Component {
           <option key={i} value={ cands[i][0] }>{ cands[i][1] + " vote: " + cands[i][2] }</option>
         );
       }
-      this.setState({ fetching: false, electionInfo: { ...this.state.electionInfo, candidates, manual } });
+      this.setState({ fetching: false, electionInfo: { ...this.state.electionInfo, candidates } });
     }
   }
 
@@ -118,7 +132,7 @@ export default class VoterPoll extends Component {
     for (let i = 0; i < candidates.length; i++) {
       votes.push(candidates[i][2].toNumber());
     }
-    await this.setState({ fetching: false, electionInfo: { ...this.state.electionInfo, winner: candidates[votes.indexOf(Math.max(votes))] } });
+    await this.setState({ fetching: false, electionInfo: { ...this.state.electionInfo, winner: candidates[votes.indexOf(Math.max(...votes))] } });
   }
 
   fetchCandidates = async() => {
@@ -163,9 +177,9 @@ export default class VoterPoll extends Component {
     }
 
     const { voted, votedTo } = this.state.voter;
-    const { status, manual, winner, candidates } = this.state.electionInfo;
+    const { status, start, end, isManual, winner, candidates } = this.state.electionInfo;
     const Result = () => {
-      return <div>{ "Winner: " + winner[1] }</div>;
+      return <div>{ "Winner: " + (winner && winner[1]) }</div>;
     }
     const VoteForm = () => {
       return (
@@ -187,7 +201,7 @@ export default class VoterPoll extends Component {
     return (
       <div>
         <div>voter poll</div>
-        { status !== 1 && <CountdownClock state={this.state} /> }
+        { status !== 1 && ((!isManual || status === 2) && <CountdownClock {...this.state.electionInfo} /> || "Waiting for organizer to close this shit") }
         { status === 1 && <Result /> }
         { (!voted && status === 0) && <VoteForm /> }
         { voted && <VotedTo /> }

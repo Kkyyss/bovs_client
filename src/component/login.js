@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { EMAIL_ENDPOINT } from '../utils/config';
+import { Spin } from 'antd';
 
 export default class Register extends Component {
   constructor(props) {
@@ -14,7 +15,7 @@ export default class Register extends Component {
 
   handleLogin = async() => {
     this.setState({ fetching: true });
-    const { email, token, role } = this.props.match.params;
+    const { email, token, role, addr } = this.props.match.params;
     const { accounts } = this.state.user;
 
     const response = await fetch(EMAIL_ENDPOINT + '/verification', {
@@ -29,7 +30,11 @@ export default class Register extends Component {
     if (response.status === 200) {
       localStorage.setItem('token', token);
       this.setState({ fetching: false }, () => {
-        this.props.history.push("/" + accounts[0] + "/" + email + "/" + role);
+        if (!addr) {
+          this.props.history.push("/" + accounts[0] + "/" + email + "/" + role);
+        } else {
+          this.props.history.push("/" + accounts[0] + "/" + email + "/voter/" + addr);
+        }
       });
     }
     this.setState({ fetching: false });
@@ -38,7 +43,9 @@ export default class Register extends Component {
   render() {
     if (this.state.fetching) {
       return (
-        <div>Loading...</div>
+        <div className="loading-cover">
+          <Spin />
+        </div>
       );
     }
 

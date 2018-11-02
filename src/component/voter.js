@@ -20,7 +20,6 @@ export default class Voter extends Component {
 
     await this.fetchElectionAddress();
     await this.listenCreateElectionEvent();
-    await this.listenStartedElectionEvent();
   }
   componentWillUnmount = async() => {
     await this.setState({ unmounted: true });
@@ -34,17 +33,6 @@ export default class Voter extends Component {
     election.electionCreated().watch((err, response) => {
      this.fetchElectionAddress();
    });
-  }
-  listenStartedElectionEvent = async() => {
-    const { election } = this.state.contract;
-    const { web3 } = this.state;
-
-    const latestBlock = await web3.eth.getBlockNumber();
-    election.startedElection().watch((err, response) => {
-      if (response.blockNumber > latestBlock) {
-        this.fetchElectionAddress();
-      }
-    });
   }
 
   fetchElectionAddress = async () => {
