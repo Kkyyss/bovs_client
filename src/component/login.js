@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { EMAIL_ENDPOINT } from '../utils/config';
+import { ENDPOINTS } from '../utils/config';
 import { Spin } from 'antd';
 
 export default class Register extends Component {
@@ -18,7 +18,7 @@ export default class Register extends Component {
     const { email, token, role, addr } = this.props.match.params;
     const { accounts } = this.state.user;
 
-    const response = await fetch(EMAIL_ENDPOINT + '/verification', {
+    const response = await fetch(ENDPOINTS + '/verification', {
       credentials: 'same-origin',
       method: 'GET',
       headers: {
@@ -30,10 +30,11 @@ export default class Register extends Component {
     if (response.status === 200) {
       localStorage.setItem('token', token);
       this.setState({ fetching: false }, () => {
+        const rolePrefix = (role === 'voter' ? '1' : '0');
         if (!addr) {
-          this.props.history.push("/" + accounts[0] + "/" + email + "/" + role);
+          this.props.history.push("/" + accounts[0] + "/" + email + "/" + rolePrefix + '/' + role);
         } else {
-          this.props.history.push("/" + accounts[0] + "/" + email + "/voter/" + addr);
+          this.props.history.push("/" + accounts[0] + "/" + email + "1/voter/" + addr);
         }
       });
     }
@@ -48,9 +49,8 @@ export default class Register extends Component {
         </div>
       );
     }
-
     return (
-      <div>Failed to login...</div>
+      <div></div>
     );
   }
 }

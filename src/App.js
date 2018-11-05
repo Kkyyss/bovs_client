@@ -8,7 +8,7 @@ import Routes from "./routes";
 import * as moment from 'moment';
 import { BackTop, Icon, Button, Spin } from 'antd';
 
-import { EMAIL_ENDPOINT } from './utils/config';
+import { ENDPOINTS } from './utils/config';
 
 class App extends Component {
   constructor(props) {
@@ -25,13 +25,16 @@ class App extends Component {
       contract: {
         user: null,
         election: null,
-      }};
+      },
+      auth: false
+    };
   }
 
   componentDidMount = async () => {
     this.initialMetaAndContract();
     this.initialServerDateTime();
   };
+
 
   initialMetaAndContract = async () => {
     this.setState({ fetching: true });
@@ -70,7 +73,7 @@ class App extends Component {
   }
 
   initialServerDateTime = async() => {
-    const response = await fetch(EMAIL_ENDPOINT + "/current-dt", {
+    const response = await fetch(ENDPOINTS + "/current-dt", {
       credentials: 'same-origin',
       method: 'GET',
       headers: {

@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
+import { ENDPOINTS } from '../utils/config';
 
 export default class Voter extends Component {
   constructor(props) {
@@ -14,15 +15,16 @@ export default class Voter extends Component {
     const { unmounted } = this.state;
 
     if (unmounted) {
-      await this.setState({ unmounted: false });
       return;
     }
 
+    this.setState({ fetching: true });
     await this.fetchElectionAddress();
     await this.listenCreateElectionEvent();
+    this.setState({ fetching: false });
   }
-  componentWillUnmount = async() => {
-    await this.setState({ unmounted: true });
+  componentWillUnmount = () => {
+    this.setState({ unmounted: true });
   }
 
   listenCreateElectionEvent = async() => {
@@ -54,7 +56,7 @@ export default class Voter extends Component {
       const title = await election.getTitle(addr[0]);
 
       myElectionAddress.push(
-        <Link key={addr} to={ "/" + userId + "/" + email + "/voter/" + addr[0] }>{ title }</Link>);
+        <Link key={addr} to={ "/" + userId + "/" + email + "/1/voter/" + addr[0] }>{ title }</Link>);
     }
 
     // Update state with the result.
@@ -70,7 +72,6 @@ export default class Voter extends Component {
 
     return (
       <div>
-        <Link to="/">Logout</Link>
         <div>
           { this.state.address }
         </div>

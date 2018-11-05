@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Link } from 'react-router-dom';
-import { EMAIL_ENDPOINT } from '../utils/config';
+import { ENDPOINTS } from '../utils/config';
 
 import { Spin, notification, Form, Icon, Input, Button, Tabs } from 'antd';
 
@@ -66,7 +66,7 @@ class Home extends Component {
     const { email, role } = this.state.user;
 
     this.setState({ fetching: true });
-    const response = await fetch(EMAIL_ENDPOINT + '/token', {
+    const response = await fetch(ENDPOINTS + '/token', {
       credentials: 'same-origin',
       method: 'POST',
       headers: {
@@ -100,7 +100,7 @@ class Home extends Component {
           <div className="login-content">
             <div className="login-title-header center">
               <Link to="/">
-                <span className="login-title">Blockchain-based Online Voting System (BCOVS)</span>
+                <span className="login-title">Blockchain-based Online Voting System (BOVS)</span>
               </Link>
             </div>
             <div className="login-title-desc"></div>
@@ -135,9 +135,7 @@ class Home extends Component {
             </div>
           </div>
           <footer className="footer">
-            {"Copyright "}
-            <Icon type="copyright" theme="outlined" />
-            { " 2018 | [FYP] Blockchain-based Online Voting System (BCOVS) | ONG KANG YI | ASIA PACIFIC UNIVERSITY (APU)" }
+              { "2019 | [FYP] Blockchain-based Online Voting System | ONG KANG YI | ASIA PACIFIC UNIVERSITY" }
           </footer>
         </div>
       </Spin>

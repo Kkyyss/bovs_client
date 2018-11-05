@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Link } from 'react-router-dom';
-import { Layout, Avatar, Menu, Breadcrumb, Icon, Row, Col, Button } from 'antd';
+import { Layout, Avatar, Spin, Menu, Breadcrumb, Icon, Row, Col, Button, Dropdown, Divider } from 'antd';
+import { ENDPOINTS } from '../utils/config';
 
 const { SubMenu } = Menu;
 const { Header, Content, Sider, Footer } = Layout;
@@ -15,12 +16,43 @@ export default class AuthNavigation extends Component {
       collapsed: false,
       clickMenu: false,
       broken: false,
+      fetching: false
     }
     this.sidebarRef = React.createRef();
   }
 
+  componentDidMount = async() => {
+    this.setState({ fetching: true });
+    // await this.fetchAuth();
+    this.setState({ fetching: false });
+  }
+
+  fetchAuth = async() => {
+    const token = localStorage.getItem('token');
+
+    if (token) {
+      const response = await fetch(ENDPOINTS + "/verification", {
+        credentials: 'same-origin',
+        method: 'GET',
+        headers: {
+          'Content-Type':'application/json',
+          'Authorization': 'Bearer ' + token
+        }
+      });
+      if (response.status === 200) {
+        return;
+      }
+    }
+    this.props.history.push('/')
+  }
+
   handleLogout = () => {
     this.props.history.push("/logout");
+  }
+  handleSwitch = async() => {
+    const { email, userId, role } = this.props.match.params;
+    const { user } = this.props.state;
+    this.props.history.push("/" + userId + '/' + email + '/' + ((role === '1') && '0/organizer' || '1/voter'));
   }
 
   handleOverlayOnClick = (e) => {
@@ -34,6 +66,14 @@ export default class AuthNavigation extends Component {
   }
 
   render() {
+    if (this.state.fetching) {
+      return (
+        <div className="loading-cover">
+          <Spin />
+        </div>
+      );
+    }
+
     const contentPlus = {
       paddingLeft: 0,
     }
@@ -72,7 +112,8 @@ export default class AuthNavigation extends Component {
       width: 'calc(100% - 256px)'
     }
 
-    const { email, userId } = this.props.match.params;
+    const { email, userId, role } = this.props.match.params;
+    const { user } = this.props.state;
 
     let activeMenuItem = []
     const lastPath = window.location.pathname.replace(/(^\/|\/$)/g, '').split('/').slice(-1)[0];
@@ -114,17 +155,20 @@ export default class AuthNavigation extends Component {
             </Link>
             <Menu mode="inline" defaultSelectedKeys={activeMenuItem}>
               <Menu.Item key="home" >
-                <Link to={ "/" + userId + "/" + email + "/organizer" } className="nav-text">
+                <Link to={ "/" + userId + "/" + email + '/' + ((role === '0') && "0/organizer" || '1/voter') } className="nav-text">
                   <Icon type="dashboard" theme="outlined" />
                   <span className="nav-text">Dashboard</span>
                 </Link>
               </Menu.Item>
-              <Menu.Item key="create" >
-                <Link to={ "/" + userId + "/" + email + "/organizer/create" } className="nav-text">
-                  <Icon type="plus" theme="outlined" />
-                  <span>Create Vote</span>
-                </Link>
-              </Menu.Item>
+              {
+                (role === '0') &&
+                <Menu.Item key="create" >
+                  <Link to={ "/" + userId + "/" + email + "/0/organizer/create" } className="nav-text">
+                    <Icon type="plus" theme="outlined" />
+                    <span>Create Vote</span>
+                  </Link>
+                </Menu.Item>
+              }
             </Menu>
           </Sider>
           <div onClick={this.handleOverlayOnClick} style={ ((!this.state.collapsed && this.state.clickMenu && this.state.broken) && overlay) || null } />
@@ -145,8 +189,12 @@ export default class AuthNavigation extends Component {
                   onClick={this.toggle}
                 />
                 <div className="header-item-right">
-                  <Menu mode="horizontal" defaultSelectedKeys={['1']} style={{ lineHeight: '64px' }}>
-                    <Menu.Item key="1" onClick={this.handleLogout}>
+                  <Menu mode='horizontal' defaultSelectedKeys={['1']} style={{ lineHeight: '64px' }}>
+                    <Menu.Item key="1" onClick={this.handleSwitch}>
+                      <Icon type="swap" />
+                      <span className="nav-text">{((role === '0') && 'Voter' || 'Organizer')}</span>
+                    </Menu.Item>
+                    <Menu.Item key="2" onClick={this.handleLogout}>
                       <Icon type="logout" />
                       <span className="nav-text">LOGOUT</span>
                     </Menu.Item>
@@ -160,9 +208,7 @@ export default class AuthNavigation extends Component {
               </div>
             </Content>
             <footer className="footer">
-              {"Copyright "}
-              <Icon type="copyright" theme="outlined" />
-              { "2018 | [FYP] Blockchain-based Online Voting System | ONG KANG YI | ASIA PACIFIC UNIVERSITY" }
+              { "2019 | [FYP] Blockchain-based Online Voting System | ONG KANG YI | ASIA PACIFIC UNIVERSITY" }
             </footer>
           </Layout>
         </Layout>

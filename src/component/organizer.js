@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import * as moment from 'moment';
 import { Link } from "react-router-dom";
 import { Breadcrumb, Button, Card, Spin, Table, Divider, Tag} from 'antd';
+import { ENDPOINTS } from '../utils/config';
 
 
 export default class Organizer extends Component {
@@ -24,14 +25,12 @@ export default class Organizer extends Component {
       sortedInfo: null,
       count: 0,
       fetching: false,
-      loading: false,
     };
   }
 
   componentDidMount = async () => {
     const { unmounted } = this.state;
     if (unmounted) {
-      await this.setState({ unmounted: false });
       return;
     }
     this.setState({ fetching: true });
@@ -41,16 +40,16 @@ export default class Organizer extends Component {
     this.setState({ fetching: false });
   }
 
-  componentWillUnmount = async() => {
-    await this.setState({ unmounted: true });
+  componentWillUnmount = () => {
+    this.setState({ unmounted: true });
   }
 
   compareDate = async(key) => {
     const { startDate, endDate, status } = this.state.dataSource[key];
     if (status === 'end') return;
-    const curStatus = (moment().valueOf() < moment(startDate).valueOf()) && 'starting' || ((endDate !== '---') && 'end') || 'now';
+    const curStatus = (moment().valueOf() < moment(startDate).valueOf()) && 'starting' || ((endDate !== '---') && moment().valueOf() >= moment(endDate).valueOf()) && 'end' || 'now';
 
-    if (status !== 'now' && curStatus === 'now') {
+    if (status === 'starting' && curStatus === 'now') {
       this.setState({
         dataSource: this.state.dataSource.map(item => item.key === key ? { ...item, status: curStatus } : item)
       })
@@ -62,16 +61,12 @@ export default class Organizer extends Component {
 
     if (curStatus === 'end') {
       this.setState({
-        dataSource: this.state.dataSource.map(item => item.key === key ? { ...item, curStatus } : item)
+        dataSource: this.state.dataSource.map(item => item.key === key ? { ...item, status: curStatus } : item)
       })
       return;
     }
 
     setTimeout(() => this.compareDate(key), 1000);
-  }
-
-  updateContent = (key) => {
-
   }
 
   listenClosedElectionEvent = async() => {
@@ -90,7 +85,7 @@ export default class Organizer extends Component {
           const endDate = await election.getEndDate(addr);
           const endDateStr = (endDate.toNumber() === 0) && "---" || moment.unix(endDate.toNumber()).format("YYYY-MM-DD HH:mm:ss");
 
-          const status = (moment().valueOf() < moment(startDateStr).valueOf()) && 'starting' || ((endDate.toNumber() !== 0) && 'end') || 'now';
+          const status = (moment().valueOf() < moment(startDateStr).valueOf()) ? 'starting' : (endDate.toNumber() !== 0 && moment().valueOf() >= moment(endDateStr).valueOf()) ? 'end' : 'now';
           const selected = this.state.dataSource.filter(item => item.address === addr);
 
           this.setState({
@@ -118,7 +113,7 @@ export default class Organizer extends Component {
 
         if (owner === email) {
           // this.setState({ addr }, this.sendEmailNotification);
-          this.setState({ loading: true });
+          this.setState({ fetching: true });
           const title = await election.getTitle(addr);
           const candSize = await election.getCandidateSize(addr);
           const votrSize = await election.getVoterSize(addr);
@@ -129,7 +124,7 @@ export default class Organizer extends Component {
           const endDate = await election.getEndDate(addr);
           const endDateStr = (endDate.toNumber() === 0) && "---" || moment.unix(endDate.toNumber()).format("YYYY-MM-DD HH:mm:ss");
 
-          const status = (moment().valueOf() < moment(startDateStr).valueOf()) && 'starting' || ((endDate.toNumber() !== 0) && 'end') || 'now';
+          const status = (moment().valueOf() < moment(startDateStr).valueOf()) ? 'starting' : (endDate.toNumber() !== 0 && moment().valueOf() >= moment(endDateStr).valueOf()) ? 'end' : 'now';
           this.state.dataSource.push({
             key: this.state.count,
             title,
@@ -143,7 +138,7 @@ export default class Organizer extends Component {
             description: `The ${modeStr} poll have ${candSize.toNumber()} candidates and ${votrSize.toNumber()} voters, it was started from ${startDateStr} ${ (endDate.toNumber() === 0) && "and until the organizer stop it" || `to ${endDateStr}` }.`
           })
           if (status !== 'end') this.compareDate(this.state.count);
-          this.setState({ loading: false, count: this.state.count + 1 });
+          this.setState({ fetching: false, count: this.state.count + 1 });
         }
       }
     });
@@ -175,7 +170,7 @@ export default class Organizer extends Component {
       const endDate = await election.getEndDate(addr[0]);
       const endDateStr = (endDate.toNumber() === 0) && "---" || moment.unix(endDate.toNumber()).format("YYYY-MM-DD HH:mm:ss");
 
-      const status = (moment().valueOf() < moment(startDateStr).valueOf()) && 'starting' || ((endDate.toNumber() !== 0) && 'end') || 'now';
+      const status = (moment().valueOf() < moment(startDateStr).valueOf()) ? 'starting' : (endDate.toNumber() !== 0 && moment().valueOf() >= moment(endDateStr).valueOf()) ? 'end' : 'now';
       myElectionAddress.push({
         key: i,
         title,
@@ -194,7 +189,7 @@ export default class Organizer extends Component {
     // Update state with the result.
     await this.setState({ dataSource: myElectionAddress, count });
     for (let i = 0; i < count; i++) {
-      if (this.state.dataSource[i].status !== 'end') this.compareDate(i);
+      if (this.state.dataSource[i] && this.state.dataSource[i].status !== 'end') this.compareDate(i);
     }
   };
 
@@ -287,10 +282,13 @@ export default class Organizer extends Component {
 
     return (
       <div>
-        <Card title="Polls" loading={fetching} bordered={false}>
+        <Card title="Polls" bordered={false}>
           <Table
             size='small'
             expandedRowRender={this.expandedRowRender}
+            locale={{
+              emptyText: 'No polls were created so far.'
+            }}
             pagination={{
               pageSize: 10,
               showQuickJumper: true,
@@ -299,7 +297,7 @@ export default class Organizer extends Component {
             dataSource={dataSource}
             columns={columns}
             onChange={this.handleTableChange}
-            loading={this.state.loading}
+            loading={this.state.fetching}
           />
         </Card>
       </div>

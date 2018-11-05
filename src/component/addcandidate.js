@@ -1,7 +1,8 @@
 import React, { Component } from "react";
-import { Drawer, Card, Radio, Tooltip, Form, Button, Col, Row, Input, Select, DatePicker, Icon, Breadcrumb } from 'antd';
+import { Drawer, Card, Modal, Radio, Tooltip, Form, Button, Col, Row, Input, Select, DatePicker, Icon, Breadcrumb } from 'antd';
 
 const FormItem = Form.Item;
+const { TextArea } = Input;
 
 let cand_uuid = 2;
 
@@ -10,9 +11,11 @@ class AddCandidate extends Component {
     super(props);
     this.state = {
       ...this.props.state,
-      visible: false
+      visible: false,
+      candModal: []
     }
   }
+
 
   showDrawer = () => {
     this.setState({
@@ -46,56 +49,80 @@ class AddCandidate extends Component {
     });
   }
 
+  handleVs = (k) => {
+    let {candModal} = this.state;
+    candModal[k] = true;
+    this.setState({
+      candModal
+    })
+  }
+  handleVsClose = (k) => {
+    let {candModal} = this.state;
+    candModal[k] = false;
+    this.setState({
+      candModal
+    })
+  }
+
   render() {
     const { getFieldDecorator, getFieldValue } = this.props.form;
-
-    const formItemLayoutWithOutLabel = {
-      labelCol: {
-        xs: { span: 24 },
-        sm: { span: 8 },
-      },
-      wrapperCol: {
-        xs: { span: 24, offset: 0 },
-        sm: { span: 20, offset: 4 },
-      },
-    };
 
     getFieldDecorator('candKeys', { initialValue: [0, 1] });
     const candKeys = getFieldValue('candKeys');
     const candFormItems = candKeys.map((k, index) => {
       return (
-        <FormItem
-          {...formItemLayoutWithOutLabel}
-          required={false}
-          key={k}
-        >
-          {getFieldDecorator(`candidates[${k}]`, {
-            validateTrigger: ['onChange', 'onBlur'],
-            rules: [{
-              required: true,
-              whitespace: true,
-              message: "Please input candidate's name.",
-            }],
-          })(
-            <Input placeholder="candidate name" style={{ width: '80%', marginRight: 8 }} />
-          )}
-          {candKeys.length > 2 ? (
-            <Icon
-              className="dynamic-delete-button"
-              type="minus-circle-o"
-              disabled={candKeys.length === 2}
-              onClick={() => this.removeCand(k)}
-            />
-          ) : null}
-        </FormItem>
+        <div key={k}>
+          <FormItem
+            required={true}
+          >
+            {getFieldDecorator(`candidates_name[${k}]`, {
+              validateTrigger: ['onChange', 'onBlur'],
+              rules: [{
+                required: true,
+                whitespace: true,
+                message: "Please input candidate's name.",
+              }],
+            })(
+              <Input className='input-setting' placeholder="name"
+                prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
+                suffix={
+                  <Button type="primary" onClick={() => this.handleVs(k)} icon="setting"/>
+                }
+                style={{ width: '90%', marginRight: 8 }} />
+            )}
+            {candKeys.length > 2 ? (
+              <Icon
+                className="dynamic-delete-button"
+                type="minus-circle-o"
+                disabled={candKeys.length === 2}
+                onClick={() => this.removeCand(k)}
+              />
+            ) : null}
+          </FormItem>
+          <Modal
+            visible={this.state.candModal[k]}
+            title="Optional Setting"
+            footer={null}
+            onCancel={() => this.handleVsClose(k)}
+          >
+            <FormItem
+              label="Candidate Image URL" extra="Example: jpg, png">
+                {getFieldDecorator(`candidates_img[${k}]`)(<Input placeholder="title image url" />)}
+            </FormItem>
+            <FormItem
+              label="Description" extra="">
+              {getFieldDecorator(`candidates_desc[${k}]`, {})(<TextArea autosize placeholder="Description about the event..." />)}
+            </FormItem>
+          </Modal>
+        </div>
       );
     });
 
     return (
       <Card title="Candidates" bordered={false}>
-        <FormItem {...formItemLayoutWithOutLabel}>
-          <Button type="dashed" onClick={this.addCand} style={{ width: '80%' }}>
-            <Icon type="plus" /> Add Candidate
+        <FormItem>
+          <Button type="dashed" onClick={this.addCand} style={{ width: '90%' }}>
+            <Icon type="user-add" /> Add Candidate
           </Button>
         </FormItem>
         {candFormItems}

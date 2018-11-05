@@ -35,23 +35,12 @@ class AddVoter extends Component {
   render() {
     const { getFieldDecorator, getFieldValue } = this.props.form;
 
-    const formItemLayoutWithOutLabel = {
-      labelCol: {
-        xs: { span: 24 },
-        sm: { span: 8 },
-      },
-      wrapperCol: {
-        xs: { span: 24, offset: 0 },
-        sm: { span: 20, offset: 4 },
-      },
-    };
     getFieldDecorator('vtrKeys', { initialValue: [0] });
     const vtrKeys = getFieldValue('vtrKeys');
 
     const vtrFormItems = vtrKeys.map((k, index) => {
       return (
         <FormItem
-          {...formItemLayoutWithOutLabel}
           required={false}
           key={k}
         >
@@ -59,7 +48,9 @@ class AddVoter extends Component {
             validateTrigger: ['onChange', 'onBlur'],
             rules: [{type: 'email', message: 'The input is not valid E-mail!'}, {required: true, message: "Please input voter's E-mail!" }],
           })(
-            <Input placeholder="Please enter voter email" style={{ width: '80%', marginRight: 8 }} />
+            <Input placeholder="Email"
+              prefix={<Icon type="mail" style={{ color: 'rgba(0,0,0,.25)' }} />}
+              style={{ width: '90%', marginRight: 8 }} />
           )}
           {vtrKeys.length > 1 ? (
             <Icon
@@ -74,14 +65,14 @@ class AddVoter extends Component {
     });
 
     return (
-      <Card title="Voters" bordered={false}>
-          <FormItem {...formItemLayoutWithOutLabel}>
-            <Button type="dashed" onClick={this.addVtr} style={{ width: '80%' }}>
-              <Icon type="plus" /> Add Voter
-            </Button>
-          </FormItem>
-          {vtrFormItems}
-      </Card>
+      <div>
+        <FormItem>
+          <Button type="dashed" onClick={this.addVtr} style={{ width: '90%' }}>
+            <Icon type="user-add" /> Add Voter
+          </Button>
+        </FormItem>
+        {vtrFormItems}
+      </div>
     )
   }
 }

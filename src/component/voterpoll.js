@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import * as moment from 'moment';
-import { EMAIL_ENDPOINT } from '../utils/config';
+import { ENDPOINTS } from '../utils/config';
 import CountdownClock from './countdown';
 
 export default class VoterPoll extends Component {
@@ -32,16 +32,17 @@ export default class VoterPoll extends Component {
     const { unmounted } = this.state;
 
     if (unmounted) {
-      await this.setState({ unmounted: false });
       return;
     }
 
+    this.setState({ fetching: true });
     await this.fetchElectionContent();
     await this.listenClosedElectionEvent();
+    this.setState({ fetching: false });
   }
 
-  componentWillUnmount = async() => {
-    await this.setState({ unmounted: true });
+  componentWillUnmount = () => {
+    this.setState({ unmounted: true });
   }
 
   listenClosedElectionEvent = async() => {
@@ -61,7 +62,7 @@ export default class VoterPoll extends Component {
     if (status === 1) return;
     const curStatus = (moment().unix() < start) ? 2 : (end !== 0 && moment().unix() >= end) ? 1 : 0;
 
-    if (status !== 0 && curStatus === 0) {
+    if (status === 2 && curStatus === 0) {
       this.setState({ electionInfo: {
         ...this.state.electionInfo,
         status: curStatus
@@ -71,7 +72,6 @@ export default class VoterPoll extends Component {
         return;
       }
     }
-
     if (curStatus === 1) {
       await this.setState({ electionInfo: {
         ...this.state.electionInfo,
@@ -130,7 +130,7 @@ export default class VoterPoll extends Component {
 
     const votes = []
     for (let i = 0; i < candidates.length; i++) {
-      votes.push(candidates[i][2].toNumber());
+      votes.push(candidates[i][4].toNumber());
     }
     await this.setState({ fetching: false, electionInfo: { ...this.state.electionInfo, winner: candidates[votes.indexOf(Math.max(...votes))] } });
   }
@@ -201,7 +201,7 @@ export default class VoterPoll extends Component {
     return (
       <div>
         <div>voter poll</div>
-        { status !== 1 && ((!isManual || status === 2) && <CountdownClock {...this.state.electionInfo} /> || "Waiting for organizer to close this shit") }
+        { status !== 1 && ((!isManual || status === 2) && <CountdownClock {...this.state.electionInfo} fetching={this.state.fetching} /> || "Waiting for organizer to close this shit") }
         { status === 1 && <Result /> }
         { (!voted && status === 0) && <VoteForm /> }
         { voted && <VotedTo /> }

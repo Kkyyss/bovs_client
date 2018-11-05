@@ -6,6 +6,7 @@
   "dependencies": {
     "antd": "^3.10.2",
     "babel-plugin-import": "^1.10.0",
+    "file-saver": "^2.0.0-rc.4",
     "moment": "^2.22.2",
     "react": "^16.4.2",
     "react-app-rewire-less": "^2.1.3",

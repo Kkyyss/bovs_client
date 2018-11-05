@@ -11,19 +11,17 @@ import OrganizerPoll from "./component/organizerpoll";
 import AuthNavigation from "./component/AuthNavigation";
 import NotFound from "./component/404";
 import CreateVote from './component/organizercreate';
+import { ENDPOINTS } from './utils/config';
 
 
 class Routes extends Component {
 
   constructor(props) {
     super(props);
-
-    this.state = this.props.state;
   }
 
-
   render() {
-    const { accounts, email } = this.state.user
+    const { accounts, email } = this.props.state.user
 
     // Navigate: Key features
     const Nav = ({ navigation: Navigation, component: Component, ...rest }) => {
@@ -34,18 +32,25 @@ class Routes extends Component {
       )
     }
 
+    const AuthRoute = ({ component: Component, ...rest }) => {
+      return (
+        <Route {...rest} render={(props) => <Nav navigation={AuthNavigation} component={Component} {...props} state={this.props.state} />}
+        />
+      )
+    }
+
     return (
       <Switch>
-        <Route exact path="/" render={(props)=><Home {...props} state={this.state} />} />
-        <Route exact path="/login/:email/:role/:token" render={(props)=><Login {...props} state={this.state} />} />
-        <Route exact path="/login/voter/:email/:token/:addr" render={(props)=><Login {...props} state={this.state} />} />
+        <Route exact path="/" render={(props)=><Home {...props} state={this.props.state} />} />
+        <Route exact path="/login/:email/:role/:token" render={(props)=><Login {...props} state={this.props.state} auth={this.props.auth} />} />
+        <Route exact path="/login/voter/:email/:token/:addr" render={(props)=><Login {...props} state={this.props.state} />} />
         <Route exact path="/logout" component={Logout} />
-        <Route exact path="/:userId/:email/voter" render={(props)=><Nav navigation={AuthNavigation} component={Voter} {...props} state={this.state} />} />
-        <Route exact path="/:userId/:email/voter/:electionId" render={(props)=><Nav navigation={AuthNavigation} component={VoterPoll} {...props} state={this.state} />} />
-        <Route exact path="/:userId/:email/organizer" render={(props)=><Nav navigation={AuthNavigation} component={Organizer} {...props} state={this.state} />} />
-        <Route exact path="/:userId/:email/organizer/create" render={(props)=><Nav navigation={AuthNavigation} component={CreateVote} {...props} state={this.state} />} />
-        <Route exact path="/:userId/:email/organizer/:electionId/vote-info" render={(props)=><Nav navigation={AuthNavigation} component={OrganizerPoll} {...props} state={this.state} />} />
-        <Route path="/404" render={(props)=><NotFound {...props} state={this.state} />} />
+        <AuthRoute exact path="/:userId/:email/:role/voter" component={Voter} />
+        <AuthRoute exact path="/:userId/:email/:role/voter/:electionId" component={VoterPoll} />
+        <AuthRoute exact path="/:userId/:email/:role/organizer" component={Organizer}/>
+        <AuthRoute exact path="/:userId/:email/:role/organizer/create" component={CreateVote} />
+        <AuthRoute exact path="/:userId/:email/:role/organizer/:electionId/vote-info" component={OrganizerPoll} />
+        <Route path="/404" render={(props)=><NotFound {...props} state={this.props.state} />} />
         <Redirect from="*" to="/404" />
       </Switch>
     )
