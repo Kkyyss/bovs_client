@@ -111,7 +111,7 @@ export default class OrganizerPoll extends Component {
     for (let i = 0; i < candSize; i++) {
       const cand = await election.getCandidate(electionId, i);
       candidates.push(
-        <Col key={i} xs={24} sm={24} md={12} lg={8} xl={8} xxl={8} style={{ marginBottom: '24px' }}>
+        <Col key={i} xs={24} sm={24} md={8} lg={8} xl={6} xxl={4} style={{ marginBottom: '24px' }}>
           <Card  cover={<img height="192" onError={this.handleBrokenImg} src={cand[2]} />}>
             <Card.Meta title={cand[1]} description={cand[3]} />
             <div style={{ marginTop: '24px', textAlign: 'center' }}>
@@ -140,10 +140,9 @@ export default class OrganizerPoll extends Component {
     const isPublic = await election.getMode(electionId);
     const start = await election.getStartDate(electionId);
     const end = await election.getEndDate(electionId);
-    console.log(content)
     if (end.toNumber() === 0) {
       const status = (moment().unix() < start) ? 2 : 0;
-      this.setState({ electionInfo: { ...this.state.electionInfo, start: start.toNumber(), isManual: true, status: 0 }  })
+      this.setState({ electionInfo: { ...this.state.electionInfo, start: start.toNumber(), isManual: true, status }  })
       if (status === 2) this.compareDate();
     } else {
       // Compare date
@@ -169,12 +168,6 @@ export default class OrganizerPoll extends Component {
         <Button onClick={this.closeElection} type="primary">Stop</Button>
       )
     };
-    const ResultContent = () => {
-      return (
-        <div>Voting is closed</div>
-      )
-    };
-
     const { fetching, submitting } = this.state;
     const { userId, email } = this.props.match.params;
     const { title, imgURL, description, isPublic, status, start, end, isManual, candidates } = this.state.electionInfo;

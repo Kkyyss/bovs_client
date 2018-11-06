@@ -1,7 +1,9 @@
 import React, { Component } from "react";
 import * as moment from 'moment';
-import { ENDPOINTS } from '../utils/config';
+import { notification, Breadcrumb, Progress, Card, Spin, Row, Col, Button, Tag, Icon } from 'antd';
+import { Link } from "react-router-dom";
 import CountdownClock from './countdown';
+import { ENDPOINTS } from '../utils/config';
 
 export default class VoterPoll extends Component {
   constructor(props) {
@@ -10,6 +12,8 @@ export default class VoterPoll extends Component {
       ...this.props.state,
       electionInfo: {
         title: "",
+        imgURL: "",
+        description: "",
         candidates: [],
         isPublic: 0,
         isManual: false,
@@ -22,9 +26,8 @@ export default class VoterPoll extends Component {
         voted: false,
         votedTo: ""
       },
-      voteForm: {
-        selected: 0,
-      }
+      submitting: false,
+      candidates: []
     };
   }
 
@@ -46,13 +49,17 @@ export default class VoterPoll extends Component {
   }
 
   listenClosedElectionEvent = async() => {
+    const { electionId } = this.props.match.params;
     const { election } = this.state.contract;
     const { web3 } = this.state;
 
     const latestBlock = await web3.eth.getBlockNumber();
     election.closedElection().watch((err, response) => {
       if (response.blockNumber > latestBlock) {
-        this.fetchElectionContent();
+        const { addr } = response.args;
+        if (addr === electionId) {
+          this.fetchElectionContent();
+        }
       }
     });
   }
@@ -76,8 +83,8 @@ export default class VoterPoll extends Component {
       await this.setState({ electionInfo: {
         ...this.state.electionInfo,
         status: curStatus
-      }})
-      this.fetchWinner();
+      }});
+      this.fetchCandidates();
       return;
     }
     setTimeout(this.compareDate, 1000);
@@ -92,6 +99,7 @@ export default class VoterPoll extends Component {
     const isPublic = await election.getMode(electionId);
     const start = await election.getStartDate(electionId);
     const end = await election.getEndDate(electionId);
+    const content = await election.getContent(electionId);
 
     await this.setState({ electionInfo: { ...this.state.electionInfo, start: start.toNumber() }, voter: { ...this.state.voter, voted: isVoted } });
     if (end.toNumber() === 0) {
@@ -100,111 +108,178 @@ export default class VoterPoll extends Component {
       if (status === 2) this.compareDate();
     } else {
       const status = (moment().unix() < start) ? 2 : (moment().unix() >= end) ? 1 : 0;
-      await this.setState({ electionInfo: { ...this.state.electionInfo, end: end.toNumber(), status } })
+      await this.setState({ electionInfo: { ...this.state.electionInfo, start: start.toNumber(), end: end.toNumber(), status } })
       if (status !== 1) this.compareDate();
     }
-    if (this.state.electionInfo.status === 1) {
-      await this.fetchWinner();
-    }
-
     if (isVoted) {
       const votedTo = await election.getVotedTo(electionId, email);
-
-      this.setState({ fetching: false, voter: { ...this.state.voter, votedTo } });
-    } else {
-      const cands = await this.fetchCandidates();
-      const candidates = []
-      for (let i = 0; i < cands.length; i++) {
-        candidates.push(
-          <option key={i} value={ cands[i][0] }>{ cands[i][1] + " vote: " + cands[i][2] }</option>
-        );
-      }
-      this.setState({ fetching: false, electionInfo: { ...this.state.electionInfo, candidates } });
+      this.setState({ voter: { ...this.state.voter, votedTo } });
     }
+    await this.fetchCandidates();
+    this.setState({ fetching: false, electionInfo: { ...this.state.electionInfo, title: content[0], imgURL: content[1], description: content[2], isPublic: isPublic.toNumber() }});
   }
 
-  fetchWinner = async() => {
-    const { email, electionId } = this.props.match.params;
-    const { election } = this.state.contract;
-    const candidates = await this.fetchCandidates();
-
-    const votes = []
-    for (let i = 0; i < candidates.length; i++) {
-      votes.push(candidates[i][4].toNumber());
-    }
-    await this.setState({ fetching: false, electionInfo: { ...this.state.electionInfo, winner: candidates[votes.indexOf(Math.max(...votes))] } });
+  handleBrokenImg = (e) => {
+    e.target.src = ENDPOINTS + '/img/no-image.png';
   }
 
   fetchCandidates = async() => {
-    const { email, electionId } = this.props.match.params;
+    const { status } = this.state.electionInfo;
+    const { voted, votedTo } = this.state.voter;
+    const { electionId } = this.props.match.params;
     const { election } = this.state.contract;
-
     const candSize = await election.getCandidateSize(electionId);
-
+    const votrSize = await election.getVoterSize(electionId);
     const candidates = [];
     for (let i = 0; i < candSize; i++) {
       const cand = await election.getCandidate(electionId, i);
-      candidates.push(cand);
+      candidates.push(
+        <Col key={i} xs={24} sm={24} md={8} lg={8} xl={6} xxl={4} style={{ marginBottom: '24px' }}>
+          <Card cover={<img height="192" onError={this.handleBrokenImg} src={cand[2]} />}>
+            <Card.Meta title={<div>{cand[1] + ' '}{(voted && cand[1] === votedTo) && <Tag color='green'>voted</Tag>}</div>} description={cand[3]} />
+            { status === 1 &&
+            <div style={{ marginTop: '24px', textAlign: 'center' }}>
+              <Progress type="circle" strokeWidth={10} percent={(cand[4].toNumber() / votrSize.toNumber()) * 100}
+                format={percent =>
+                    <div style={{ fontSize: '16px' }}>
+                      <span>{cand[4].toNumber() + '/' + votrSize.toNumber()}</span>
+                      <br/>
+                      <span>{percent.toFixed(2) + '%'}</span>
+                    </div>
+                } />
+            </div>
+            }
+            { (!voted && status === 0) &&
+              <div style={{ marginTop: '24px', textAlign: 'center' }}>
+                <Button value={cand[0].toNumber()} type="primary" block onClick={this.handleVote}>Vote</Button>
+              </div>
+            }
+          </Card>
+        </Col>
+      );
     }
-    return candidates;
+    this.setState({ electionInfo: { ...this.state.electionInfo, candidates }  })
   }
 
-  handleSelectedChange = (e) => {
-    this.setState({ voteForm: { selected: e.target.value } });
-  }
+  openNotification = (type, message, description, duration) => {
+    notification[type]({
+      message,
+      description,
+      duration
+    });
+  };
 
   handleVote = async(e) => {
     e.preventDefault();
 
-    this.setState({ fetching: true });
+    this.setState({ submitting: true });
     const { email, electionId } = this.props.match.params;
     const { election } = this.state.contract;
     const { accounts } = this.state.user;
 
     try {
-      await election.vote(electionId, email, this.state.voteForm.selected, { from: accounts[0] });
+      await election.vote(electionId, email, e.target.value, { from: accounts[0] });
       this.fetchElectionContent();
     } catch (err) {
-      this.setState({ fetching: false });
+      this.openNotification('error', 'Error', 'Failed to vote.', 4.5);
     }
+    this.setState({ submitting: false });
   }
 
   render() {
-    if (this.state.fetching) {
-      return (
-        <div>Loading...</div>
-      );
-    }
-
+    const { fetching, submitting } = this.state;
+    const { userId, email } = this.props.match.params;
     const { voted, votedTo } = this.state.voter;
-    const { status, start, end, isManual, winner, candidates } = this.state.electionInfo;
-    const Result = () => {
-      return <div>{ "Winner: " + (winner && winner[1]) }</div>;
-    }
-    const VoteForm = () => {
-      return (
-        <form onSubmit={this.handleVote}>
-          <select onChange={this.handleSelectedChange} value={this.state.voteForm.selected}>
-            { candidates }
-          </select>
-          <input type="submit" value="Vote" />
-        </form>
-      );
-    }
-
-    const VotedTo = () => {
-      return (
-        <div>{ "You voted to " + votedTo}</div>
-      );
-    }
+    const { title, imgURL, description, isPublic, status, start, end, isManual, winner, candidates } = this.state.electionInfo;
+    const statusColor = ['green', 'lightgray', 'yellow']
+    const statusText = ['now', 'end', 'starting']
 
     return (
       <div>
-        <div>voter poll</div>
-        { status !== 1 && ((!isManual || status === 2) && <CountdownClock {...this.state.electionInfo} fetching={this.state.fetching} /> || "Waiting for organizer to close this shit") }
-        { status === 1 && <Result /> }
-        { (!voted && status === 0) && <VoteForm /> }
-        { voted && <VotedTo /> }
+        <Breadcrumb style={{ margin: '16px 0' }}>
+          <Breadcrumb.Item><Link to={ "/" + userId + "/" + email + "/1/voter" }>Dashboard</Link></Breadcrumb.Item>
+          <Breadcrumb.Item>{title}</Breadcrumb.Item>
+        </Breadcrumb>
+        <Row gutter={24}>
+          <Col xs={24} sm={24} md={24} lg={24} xl={24} xxl={24} style={{ marginBottom: '24px' }}>
+            <Card
+              cover={imgURL &&
+                    <div
+                      style={{
+                      backgroundImage: `url("${imgURL}")`,
+                      height: '200px',
+                      backgroundAttachment: 'fixed',
+                      backgroundPosition: 'center',
+                      backgroundRepeat: 'no-repeat',
+                      backgroundSize: 'cover'
+                      }} />
+                  }
+              loading={fetching}
+              bordered={false}
+            >
+              <Card.Meta
+                title={<div>{title + ' '}<Tag color={statusColor[status]}>{statusText[status]}</Tag></div>}
+                description={description}
+              />
+              <div style={{ marginTop: '24px' }}>
+                {status !== 1 && ((!isManual || status === 2) &&
+                  <div className='clock' style={{ marginBottom: '24px' }}>
+                    <CountdownClock {...this.state.electionInfo} />
+                  </div>
+                )}
+                <Row gutter={24}>
+                  <Col xs={24} sm={24} md={4} lg={4} xl={4} xxl={4}>
+                    <Icon type="info-circle" theme="outlined" />{' Mode:'}
+                  </Col>
+                  <Col xs={24} sm={24} md={20} lg={20} xl={20} xxl={20}>
+                    <div>{((isPublic === 0) ? "Private" : "Public") }</div>
+                  </Col>
+                </Row>
+                <Row gutter={24}>
+                  <Col xs={24} sm={24} md={4} lg={4} xl={4} xxl={4}>
+                    <Icon type="calendar" theme="outlined" />{' Start Date:'}
+                  </Col>
+                  <Col xs={24} sm={24} md={20} lg={20} xl={20} xxl={20}>
+                    <div>{ ((start !== 0) ? moment.unix(start).format('MMMM Do YYYY, h:mm:ss a') : "----") }</div>
+                  </Col>
+                </Row>
+                <Row gutter={24}>
+                  <Col xs={24} sm={24} md={4} lg={4} xl={4} xxl={4}>
+                    <Icon type="calendar" theme="outlined" />{' End Date:'}
+                  </Col>
+                  <Col xs={24} sm={24} md={20} lg={20} xl={20} xxl={20}>
+                    <div>{((end !== 0) ? moment.unix(end).format('MMMM Do YYYY, h:mm:ss a') : "Manually")}</div>
+                  </Col>
+                </Row>
+                { voted &&
+                <Row gutter={24}>
+                  <Col xs={24} sm={24} md={4} lg={4} xl={4} xxl={4}>
+                    <Icon type="check" theme="outlined" />{' Voted To:'}
+                  </Col>
+                  <Col xs={24} sm={24} md={20} lg={20} xl={20} xxl={20}>
+                    <div>{votedTo}</div>
+                  </Col>
+                </Row>
+                }
+              </div>
+            </Card>
+          </Col>
+          <Col xs={24} sm={24} md={24} lg={24} xl={24} xxl={24} style={{ marginBottom: '24px' }}>
+            <Spin spinning={submitting}>
+              <Card
+                title="Candidates"
+                style={{ minHeight: '400px' }}
+                loading={fetching}
+                bordered={false}>
+                <div style={{ marginTop: '24px' }}>
+                  <Row gutter={24}>
+                    { candidates }
+                  </Row>
+                </div>
+              </Card>
+            </Spin>
+          </Col>
+        </Row>
       </div>
     );
   }

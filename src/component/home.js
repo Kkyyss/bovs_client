@@ -100,10 +100,11 @@ class Home extends Component {
           <div className="login-content">
             <div className="login-title-header center">
               <Link to="/">
-                <span className="login-title">Blockchain-based Online Voting System (BOVS)</span>
+                <img className="home-logo" src={ENDPOINTS + '/img/bovs-logo.png'} />
+                <span className="login-title">B.O.V.S</span>
               </Link>
             </div>
-            <div className="login-title-desc"></div>
+            <div className="login-title-desc">B.O.V.S is a Blockchain-based Online Voting System</div>
             <div className="login-content-main">
               <Form onSubmit={this.login}>
                 <Tabs defaultActiveKey="1" onTabClick={this.handleTabChange} animated={false}>

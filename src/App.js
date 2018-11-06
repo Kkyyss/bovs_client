@@ -5,6 +5,7 @@ import User from "./contracts/User.json";
 import TruffleContract from 'truffle-contract';
 import getWeb3 from "./utils/getWeb3";
 import Routes from "./routes";
+import ErrorPage from './component/errorPage';
 import * as moment from 'moment';
 import { BackTop, Icon, Button, Spin } from 'antd';
 
@@ -98,7 +99,7 @@ class App extends Component {
       );
     }
     if (!this.state.web3) {
-      return <div>Please install the metamask and login with the valid accounts...</div>
+      return <ErrorPage />
     }
 
     return (

@@ -150,9 +150,12 @@ export default class AuthNavigation extends Component {
               }
             }}
           >
-            <Link to={ "/" }>
-              <div className="logo" />
-            </Link>
+            <div className="menu-logo" id='logo' >
+              <Link to={ "/" }>
+                <img width="32" height="32" src={ENDPOINTS + '/img/bovs-logo.png'} />
+                <h1>B.O.V.S</h1>
+              </Link>
+            </div>
             <Menu mode="inline" defaultSelectedKeys={activeMenuItem}>
               <Menu.Item key="home" >
                 <Link to={ "/" + userId + "/" + email + '/' + ((role === '0') && "0/organizer" || '1/voter') } className="nav-text">
@@ -192,7 +195,7 @@ export default class AuthNavigation extends Component {
                   <Menu mode='horizontal' defaultSelectedKeys={['1']} style={{ lineHeight: '64px' }}>
                     <Menu.Item key="1" onClick={this.handleSwitch}>
                       <Icon type="swap" />
-                      <span className="nav-text">{((role === '0') && 'Voter' || 'Organizer')}</span>
+                      <span className="nav-text">{((role === '0') && 'VOTER' || 'ORGANIZER')}</span>
                     </Menu.Item>
                     <Menu.Item key="2" onClick={this.handleLogout}>
                       <Icon type="logout" />
