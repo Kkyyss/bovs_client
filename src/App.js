@@ -1,13 +1,12 @@
 import React, { Component } from "react";
 import { BrowserRouter as Router } from "react-router-dom";
 import ElectionFactory from "./contracts/ElectionFactory.json";
-import User from "./contracts/User.json";
 import TruffleContract from 'truffle-contract';
 import getWeb3 from "./utils/getWeb3";
 import Routes from "./routes";
 import ErrorPage from './component/errorPage';
 import * as moment from 'moment';
-import { BackTop, Icon, Button, Spin } from 'antd';
+import { BackTop, Button, Spin } from 'antd';
 
 import { ENDPOINTS } from './utils/config';
 

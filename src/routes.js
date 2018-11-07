@@ -6,13 +6,10 @@ import Login from "./component/login";
 import Logout from "./component/logout";
 import VoterPoll from "./component/voterpoll";
 import Organizer from "./component/organizer";
-import OrganizerCreate from "./component/organizercreate";
 import OrganizerPoll from "./component/organizerpoll";
 import AuthNavigation from "./component/AuthNavigation";
 import NotFound from "./component/404";
 import CreateVote from './component/organizercreate';
-import { ENDPOINTS } from './utils/config';
-
 
 class Routes extends Component {
 

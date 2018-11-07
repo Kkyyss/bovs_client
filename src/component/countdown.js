@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import * as moment from 'moment';
-import { Spin } from 'antd';
 
 export default class CountdownClock extends Component {
 
@@ -16,7 +15,6 @@ export default class CountdownClock extends Component {
         seconds: 0,
         years: 0
       },
-      fetching: false
     };
   }
 
@@ -73,7 +71,6 @@ export default class CountdownClock extends Component {
   render() {
     const { status } = this.props;
     const { years, months, days, hours, minutes, seconds } = this.state.countDown;
-    const { fetching } = this.state;
     const TimesLeft = () => {
       return (
         <div>

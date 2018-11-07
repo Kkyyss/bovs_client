@@ -73,7 +73,7 @@ class CreateVote extends Component {
         const { addr, owner } = response.args;
 
         if (owner === email) {
-          // this.setState({ addr }, this.sendEmailNotification);
+          this.sendEmailNotification(addr);
           this.handleResetForm();
         }
       }
@@ -148,9 +148,7 @@ class CreateVote extends Component {
     e.preventDefault();
 
     await this.props.form.validateFieldsAndScroll({ scroll: {offsetTop: 64, offsetBottom: 160}}, async(err, values) => {
-      console.log(values)
       if (!err) {
-        console.log('Received values of form: ', values);
         this.setState({ fetching: true });
         const { email, userId } = this.props.match.params;
         const { election } = this.state.contract;
@@ -181,7 +179,6 @@ class CreateVote extends Component {
             start_end, { from: accounts[0] });
           this.openNotification('success', 'Success', 'The poll was created successfully.', 4.5)
         } catch (err) {
-          console.log(err)
           this.openNotification('error', 'Error', 'The poll was failed to create.', 4.5)
         }
         this.setState({ fetching: false });
@@ -189,12 +186,12 @@ class CreateVote extends Component {
     });
   }
 
-  sendEmailNotification = async() => {
+  sendEmailNotification = async(addr) => {
     await this.props.form.validateFieldsAndScroll({ scroll: {offsetTop: 64, offsetBottom: 160}}, async(err, values) => {
       if (!err) {
-        const { isPublic, isManual, startNow } = this.state.electionForm
+        const { email } = this.props.match.params;
+        const { isPublic, isManual, startNow, manuallyAddVoter } = this.state.electionForm
         const { title, candidates, voters, startDateTime, endDateTime } = values
-        const { addr } = this.state
         const dStart = moment(startDateTime).unix();
         const dEnd = moment(endDateTime).unix();
 
@@ -207,8 +204,12 @@ class CreateVote extends Component {
               'Authorization': 'Bearer ' + localStorage.getItem('token')
             },
             body: JSON.stringify({
-              emails: voters,
+              emails: ((!isPublic && !manuallyAddVoter) ? this.state.electionForm.voters : voters),
+              creator: email,
               addr,
+              isManual,
+              startDate: moment(startDateTime).utc(),
+              endDate: moment(endDateTime).utc(),
               election: {
                 title,
                 isManual,
