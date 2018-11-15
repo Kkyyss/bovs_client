@@ -129,7 +129,6 @@ export default class AuthNavigation extends Component {
             id="sider"
             width={256}
             ref={this.sidebarRef}
-            theme="light"
             collapsible
             collapsed={this.state.collapsed}
             breakpoint="lg"
@@ -156,7 +155,7 @@ export default class AuthNavigation extends Component {
                 <h1>B.O.V.S</h1>
               </Link>
             </div>
-            <Menu mode="inline" defaultSelectedKeys={activeMenuItem}>
+            <Menu theme="dark" mode="inline" defaultSelectedKeys={activeMenuItem}>
               <Menu.Item key="home" >
                 <Link to={ "/" + userId + "/" + email + '/' + ((role === '0') && "0/organizer" || '1/voter') } className="nav-text">
                   <Icon type="dashboard" theme="outlined" />

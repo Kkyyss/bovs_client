@@ -80,7 +80,7 @@ class AddCandidate extends Component {
               rules: [{
                 required: true,
                 whitespace: true,
-                message: "Please input candidate's name.",
+                message: "Please input candidate/option name.",
               }],
             })(
               <Input className='input-setting' placeholder="name"
@@ -106,7 +106,7 @@ class AddCandidate extends Component {
             onCancel={() => this.handleVsClose(k)}
           >
             <FormItem
-              label="Candidate Image URL" extra="Example: jpg, png">
+              label="Candidate/Option Image URL" extra="Example: jpg, png">
                 {getFieldDecorator(`candidates_img[${k}]`)(<Input placeholder="title image url" />)}
             </FormItem>
             <FormItem
@@ -119,14 +119,14 @@ class AddCandidate extends Component {
     });
 
     return (
-      <Card title="Candidates" bordered={false}>
+      <div>
         <FormItem>
           <Button type="dashed" onClick={this.addCand} style={{ width: '90%' }}>
-            <Icon type="user-add" /> Add Candidate
+            <Icon type="user-add" /> Add Candidate/Option
           </Button>
         </FormItem>
         {candFormItems}
-      </Card>
+      </div>
     )
   }
 }

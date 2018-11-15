@@ -27,7 +27,9 @@ class CreateVote extends Component {
       addr: null,
       electionForm: {
         title: "",
-        candidates: [],
+        cand_name: [],
+        cand_img: [],
+        cand_desc: [],
         isPublic: false,
         voters: [],
         isManual: false,
@@ -35,14 +37,20 @@ class CreateVote extends Component {
         startDateTime: 0,
         endDateTime: 0,
         manuallyAddVoter: false,
+        manuallyAddCandidate: false,
       },
+      startDateRange: false,
+      startDRMsg: '',
+      endDateRangeErr: false,
+      endDRMsg: '',
       address: [],
       startDate: null,
       endDate: null,
       loading: false,
       visibleTitle: false,
       visibleCandidate: false,
-      fileList: []
+      voterFileList: [],
+      candFileList: []
     };
   }
 
@@ -68,7 +76,7 @@ class CreateVote extends Component {
     const { web3 } = this.state;
 
     const latestBlock = await web3.eth.getBlockNumber();
-    election.electionCreated().watch((err, response) => {
+    election.electionCreated().watch(async(err, response) => {
       if (response.blockNumber > latestBlock) {
         const { addr, owner } = response.args;
 
@@ -81,11 +89,17 @@ class CreateVote extends Component {
   }
 
   handleModeChange = (e) => {
+
+    this.props.form.resetFields('voterUploader');
+
     this.setState({ electionForm: {
       ...this.state.electionForm,
       isPublic: (e.target.value === "0") ? false : true,
-      manuallyAddVoter: false
-    }})
+      manuallyAddVoter: false,
+      voters: [],
+    },
+      voterFileList: [],
+    })
   }
   handleStartModeChange = (e) => {
     this.setState({ electionForm: {
@@ -99,41 +113,73 @@ class CreateVote extends Component {
       isManual: (e.target.value === "0") ? false : true
     }})
   }
-  handleStartDateRange = (rule, value, callback) => {
+  handleStartDateRange = (value) => {
     const { getFieldValue } = this.props.form;
     const startDate = getFieldValue('startDateTime');
     const endDate = getFieldValue('endDateTime');
 
-    if (!value) {
-      callback();
+
+    if (value === null) {
+      this.setState({ startDateRangeErr: false, startDRMsg:''});
+      return;
     }
 
-    if (startDate && startDate.startOf('minute').valueOf() <= moment().startOf('minute').valueOf()) {
-      callback('Please ensure the start datetime is more than the current datetime');
+    let err = false;
+    if (value) {
+      err = value && value.startOf('minute').valueOf() <= moment().startOf('minute').valueOf();
+    } else {
+      err = startDate && startDate.startOf('minute').valueOf() <= moment().startOf('minute').valueOf();
+    }
+    if (err) {
+      this.setState({ startDateRangeErr: true, startDRMsg: 'Please ensure the start datetime is more than the current datetime'});
+      return false;
     }
 
-    if (endDate && startDate && startDate.valueOf() >= endDate.valueOf()) {
-      callback('Please ensure the start datetime is not more than or equal to the end datetime');
+    if (value) {
+      err = value && value.valueOf() >= endDate.valueOf();
+    } else {
+      err = endDate && startDate && startDate.valueOf() >= endDate.valueOf();
     }
-    callback();
+
+    if (err) {
+      this.setState({ startDateRangeErr: true, startDRMsg:'Please ensure the start datetime is not more than or equal to the end datetime'});
+      return false;
+    }
+    this.setState({ startDateRangeErr: false, startDRMsg:''});
+    return true;
   }
-  handleEndDateRange = (rule, value, callback) => {
+  handleEndDateRange = (value) => {
     const { getFieldValue } = this.props.form;
     const startDate = getFieldValue('startDateTime');
     const endDate = getFieldValue('endDateTime');
 
-    if (!value) {
-      callback();
+    if (value === null) {
+      this.setState({ endDateRangeErr: false, endDRMsg:''});
+      return;
     }
 
-    if (endDate && endDate.startOf('minute').valueOf() <= moment().startOf('minute').valueOf()) {
-      callback('Please ensure the end datetime is more than the current datetime');
+    let err = false;
+    if (value) {
+      err = value.startOf('minute').valueOf() <= moment().startOf('minute').valueOf();
+    } else {
+      err = endDate && endDate.startOf('minute').valueOf() <= moment().startOf('minute').valueOf();
+    }
+    if (err) {
+      this.setState({ endDateRangeErr: true, endDRMsg: 'Please ensure the end datetime is more than the current datetime'});
+      return false;
     }
 
-    if (startDate && endDate && endDate.valueOf() <= startDate.valueOf()) {
-      callback('Please ensure the end datetime is more than the start datetime');
+    if (value && startDate){
+      err = value && value.valueOf() <= startDate.valueOf();
+    } else {
+      err = startDate && endDate && endDate.valueOf() <= startDate.valueOf();
     }
-    callback();
+    if (err) {
+      this.setState({ endDateRangeErr: true, endDRMsg: 'Please ensure the end datetime is more than the start datetime'});
+      return false;
+    }
+    this.setState({ endDateRangeErr: false, endDRMsg:''});
+    return true;
   }
 
   openNotification = (type, message, description, duration) => {
@@ -144,22 +190,25 @@ class CreateVote extends Component {
     });
   };
 
+  verifyDateRange = () => {
+    if (!this.handleStartDateRange() || !this.handleEndDateRange()) {
+      return false;
+    }
+    return true;
+  }
+
   createElection = async (e) => {
     e.preventDefault();
 
     await this.props.form.validateFieldsAndScroll({ scroll: {offsetTop: 64, offsetBottom: 160}}, async(err, values) => {
-      if (!err) {
+      const vdr = this.verifyDateRange();
+      if (!err && vdr) {
         this.setState({ fetching: true });
         const { email, userId } = this.props.match.params;
         const { election } = this.state.contract;
         const { accounts } = this.state.user;
-        const { isPublic, isManual, startNow, manuallyAddVoter } = this.state.electionForm
+        const { isPublic, isManual, startNow, manuallyAddVoter, manuallyAddCandidate, cand_name, cand_img, cand_desc } = this.state.electionForm
         const { title, titleImgUrl, description, candidates_name, candidates_img, candidates_desc, voters, startDateTime, endDateTime } = values
-        if (!isPublic && (!this.state.electionForm.voters || (this.state.electionForm.voters && this.state.electionForm.voters.length <= 0))) {
-          this.setState({ fetching: false });
-          this.openNotification('error', 'Error', 'Minimum numbers of voter should be 1.', 4.5)
-          return;
-        }
 
         let dStart = moment(startDateTime).unix();
         if (startNow) {
@@ -170,13 +219,15 @@ class CreateVote extends Component {
         const content = [email, title, description];
         const setup = [isManual, isPublic];
         const start_end = [dStart, dEnd]
-        const imgs = candidates_img.join('|');
+        let imgs = (!manuallyAddCandidate) && cand_img.join('|') || candidates_img.join('|');
+        let candName = (!manuallyAddCandidate) && cand_name || candidates_name;
+        let candDesc = (!manuallyAddCandidate) && cand_desc || candidates_desc;
 
         try {
           const response = await election.createElection(
             content, titleImgUrl || '', setup,
-            candidates_name, imgs || '', candidates_desc, ((!isPublic && !manuallyAddVoter) ? this.state.electionForm.voters : (voters || [])),
-            start_end, { from: accounts[0] });
+            candName, imgs || '', candDesc, ((!isPublic && !manuallyAddVoter) ? this.state.electionForm.voters : (voters || [])),
+            start_end, { from: accounts[0], gasPrice: 0 });
           this.openNotification('success', 'Success', 'The poll was created successfully.', 4.5)
         } catch (err) {
           this.openNotification('error', 'Error', 'The poll was failed to create.', 4.5)
@@ -191,7 +242,7 @@ class CreateVote extends Component {
       if (!err) {
         const { email } = this.props.match.params;
         const { isPublic, isManual, startNow, manuallyAddVoter } = this.state.electionForm
-        const { title, candidates, voters, startDateTime, endDateTime } = values
+        const { title, voters, startDateTime, endDateTime } = values
         const dStart = moment(startDateTime).unix();
         const dEnd = moment(endDateTime).unix();
 
@@ -230,11 +281,18 @@ class CreateVote extends Component {
     this.props.form.resetFields();
     this.setState({
       electionForm: {
-      ...this.state.electionForm,
-      isPublic: false,
-      isManual: false,
-      startNow: false
-    }})
+        ...this.state.electionForm,
+        isPublic: false,
+        isManual: false,
+        startNow: false,
+        voters: [],
+        cand_name: [],
+        cand_img: [],
+        cand_desc: []
+      },
+      voterFileList: [],
+      candFileList: [],
+    })
   }
 
   handleVisibleTitle = (e) => {
@@ -251,24 +309,44 @@ class CreateVote extends Component {
       manuallyAddVoter: (e.target.value === "0") ? true : false
     }})
   }
-
-  handleReadCSV = (file) => {
-    const reader = new FileReader();
-    reader.readAsText(file);
-    reader.onload = this.loadCSVHandler;
+  handleUploadCandChange = (e) => {
+    this.setState({ electionForm: {
+      ...this.state.electionForm,
+      manuallyAddCandidate: (e.target.value === "0") ? true : false
+    }})
   }
 
-  loadCSVHandler = (e) => {
+  handleReadCandCSV = (file) => {
+    const reader = new FileReader();
+    reader.readAsText(file);
+    reader.onload = this.loadCandCSVHandler;
+  }
+  handleReadVoterCSV = (file) => {
+    const reader = new FileReader();
+    reader.readAsText(file);
+    reader.onload = this.loadVoterCSVHandler;
+  }
+
+  loadVoterCSVHandler = (e) => {
     const csv = e.target.result;
     // line splitter
     const voters = csv.split(/\r\n?|\n/);
     const re = /\S+@\S+\.\S+/;
+    if (voters.length < 1) {
+        this.props.form.resetFields('voterUploader')
+        this.openNotification('error', 'Error', 'Minimum numbers of voter should be 1.', 4.5)
+        this.setState({
+          voterFileList: [],
+        })
+        return;
+    }
     for (let i = 0; i < voters.length; i++){
       const valid = re.test(voters[i]);
       if (!valid) {
+        this.props.form.resetFields('voterUploader')
         this.openNotification('error', 'Error', `Please ensure the emails' format was correct.`, 4.5);
         this.setState({
-          fileList: [],
+          voterFileList: [],
         })
         return;
       }
@@ -278,11 +356,53 @@ class CreateVote extends Component {
       voters
     }});
   }
+  loadCandCSVHandler = (e) => {
+    const csv = e.target.result;
+    // line splitter
+    const candidates_split = csv.split(/\r\n?|\n/);
+    const cand_name = []
+    const cand_img = []
+    const cand_desc = []
+    if (candidates_split.length < 2) {
+      this.openNotification('error', 'Error', `Please ensure there is minimum 2 candidates/options.`, 4.5);
+      this.props.form.resetFields('candUploader')
+      this.setState({
+        candFileList: [],
+      })
+      return;
+    }
+    for (let i = 0; i < candidates_split.length; i++){
+      const candidate = candidates_split[i].split(',');
+      if (candidate[0] && !candidate[0].trim()) {
+        this.openNotification('error', 'Error', `Please ensure the candidate/option name is not empty.`, 4.5);
+        this.props.form.resetFields('candUploader')
+        this.setState({
+          candFileList: [],
+        })
+        return;
+      }
+      cand_name.push(candidate[0])
+      cand_img.push(candidate[1])
+      cand_desc.push(candidate[2]);
+    }
+    this.setState({ electionForm: {
+      ...this.state.electionForm,
+      cand_name,
+      cand_img,
+      cand_desc
+    }});
+  }
 
-  handleDownload = async(e) => {
+
+  handleDownloadVoterTemplate = async(e) => {
     e.preventDefault();
 
-    saveAs(ENDPOINTS + '/dl/template.csv', 'template.csv');
+    saveAs(ENDPOINTS + '/dl/voter_template.csv', 'voter_template.csv');
+  }
+  handleDownloadCandidateTemplate = async(e) => {
+    e.preventDefault();
+
+    saveAs(ENDPOINTS + '/dl/candidate_template.csv', 'candidate_template.csv');
   }
 
   render() {
@@ -301,26 +421,47 @@ class CreateVote extends Component {
       },
     };
 
-    const uploadProps = {
+    const voterUploadProps = {
       onRemove: (file) => {
-        this.setState({ fileList: [], electionForm: { ...this.state.electionForm, voters: [] } });
+        this.setState({ voterFileList: [], electionForm: { ...this.state.electionForm, voters: [] } });
+        this.props.form.resetFields('voterUploader')
       },
       beforeUpload: (file) => {
         const isCSV = file.type === 'text/csv';
         if (!isCSV) {
           this.openNotification('error', 'Error', 'Please ensure the selected file type is .csv', 4.5)
         } else {
-          this.setState(({ fileList }) => ({
-            fileList: [file],
+          this.setState(({ voterFileList }) => ({
+            voterFileList: [file],
           }));
-          this.handleReadCSV(file);
+          this.handleReadVoterCSV(file);
         }
         return false;
       },
-      fileList: this.state.fileList
+      fileList: this.state.voterFileList
+    }
+    const candUploadProps = {
+      onRemove: (file) => {
+        this.setState({ candFileList: [], electionForm: { ...this.state.electionForm, cand_name: [], cand_img: [], cand_desc: [] } });
+        this.props.form.resetFields('candUploader')
+      },
+      beforeUpload: (file) => {
+        const isCSV = file.type === 'text/csv';
+        if (!isCSV) {
+          this.openNotification('error', 'Error', 'Please ensure the selected file type is .csv', 4.5)
+        } else {
+          this.setState(({ candFileList }) => ({
+            candFileList: [file],
+          }));
+          this.handleReadCandCSV(file);
+        }
+        return false;
+      },
+      fileList: this.state.candFileList
     }
 
     return (
+      <div>
       <Spin spinning={this.state.fetching}>
         <Modal
           visible={this.state.visibleTitle}
@@ -399,17 +540,17 @@ class CreateVote extends Component {
                       )}
                     </FormItem>
                     { !electionForm.startNow &&
-                      <FormItem colon={false} label="Start Date">
+                      <FormItem colon={false} label="Start Date" >
                       {  getFieldDecorator('startDateTime', {
                         rules: [
-                          { required: true, message: 'Please choose the start date' },
-                          {
-                            validator: this.handleStartDateRange
-                          }
+                          { required: true, message: 'Please choose the start date' }
                         ],
                       })(
-                        <DatePicker showTime={{ format: 'HH:mm' }} style={{ width: '100%' }} format="YYYY-MM-DD HH:mm" />
+                        <DatePicker showTime={{ format: 'HH:mm' }} onChange={this.handleStartDateRange} style={{ width: '100%' }} format="YYYY-MM-DD HH:mm" />
                       )}
+                      { this.state.startDateRangeErr &&
+                        <div className="ant-form-explain" style={{ color: '#f5222d' }}>{this.state.startDRMsg}</div>
+                      }
                       </FormItem>
                     }
                   </Col>
@@ -435,14 +576,14 @@ class CreateVote extends Component {
                           rules: [
                             {
                               required: true, message: 'Please choose the end datetime'
-                            },
-                            {
-                              validator: this.handleEndDateRange
                             }
                           ],
                         })(
-                          <DatePicker showTime={{ format: 'HH:mm' }} style={{ width: '100%' }} format="YYYY-MM-DD HH:mm" />
+                          <DatePicker showTime={{ format: 'HH:mm' }} onChange={this.handleEndDateRange} style={{ width: '100%' }} format="YYYY-MM-DD HH:mm" />
                         )}
+                        { this.state.endDateRangeErr &&
+                          <div className="ant-form-explain" style={{ color: '#f5222d' }}>{this.state.endDRMsg}</div>
+                        }
                       </FormItem>
                     }
                   </Col>
@@ -455,16 +596,67 @@ class CreateVote extends Component {
           <Col
             xs={24}
             sm={24}
-            md={ !electionForm.isPublic && 14 || 24 }
-            lg={ !electionForm.isPublic && 14 || 24 }
-            xl={ !electionForm.isPublic && 16 || 24 }
-            xxl={ !electionForm.isPublic && 16 || 24 }
+            md={ !electionForm.isPublic && 12 || 24 }
+            lg={ !electionForm.isPublic && 12 || 24 }
+            xl={ !electionForm.isPublic && 12 || 24 }
+            xxl={ !electionForm.isPublic && 12 || 24 }
             style={{ marginBottom: '24px' }}>
-            <AddCandidate {...this.props} />
-          </Col>
-
+              <Card title="Candidates/Options" bordered={false}>
+                <FormItem
+                  colon={false}
+                  label={(
+                <span>
+                  {"Add Candidate/Option Mode "}
+                  <Tooltip placement="rightTop" title={
+                    (<span>
+                      {"Manually (default)"}
+                      <br/>
+                      {"Candidates/Options are added manually."}
+                      <br/><br/>
+                      {"CSV"}
+                      <br/>
+                      {"Candidates/Options are added from the .csv file."}
+                    </span>)}>
+                    <Icon type="question-circle-o" />
+                  </Tooltip>
+                </span>
+              )}>
+                {getFieldDecorator('manuallyAddCandidate', {
+                  rules: [{ required: true, message: 'Please choose the type' }],
+                  initialValue: '1'
+                })(
+                  <RadioGroup onChange={this.handleUploadCandChange}>
+                    <RadioButton value="1">CSV</RadioButton>
+                    <RadioButton value="0">Manually</RadioButton>
+                  </RadioGroup>
+                )}
+              </FormItem>
+                { electionForm.manuallyAddCandidate && <AddCandidate {...this.props} /> ||
+                    <div>
+                      <FormItem>
+                        <Button type="primary" onClick={this.handleDownload} block>
+                          <Icon type="download" /> Download .csv Template
+                        </Button>
+                      </FormItem>
+                      <FormItem
+                        extra={ !electionForm.manuallyAddCandidate && electionForm.cand_name.length !== 0 && electionForm.cand_name.length + ' candidates/options'}
+                      >
+                        {getFieldDecorator('candUploader', {
+                          rules: [{ required: true, message: 'Please select a file.' }],
+                        })(
+                          <Upload {...candUploadProps}>
+                            <Button block>
+                              <Icon type="upload" /> Upload .csv
+                            </Button>
+                          </Upload>
+                        )}
+                      </FormItem>
+                    </div>
+                }
+              </Card>
+            </Col>
           { !electionForm.isPublic &&
-            <Col xs={24} sm={24} md={10} lg={10} xl={8} xxl={8} style={{ marginButton: '24px' }}>
+            <Col xs={24} sm={24} md={12} lg={12} xl={12} xxl={12} style={{ marginButton: '24px' }}>
               <Card title="Voters" bordered={false}>
                 <FormItem
                   colon={false}
@@ -505,11 +697,15 @@ class CreateVote extends Component {
                       <FormItem
                         extra={ !electionForm.manuallyAddVoter && electionForm.voters.length !== 0 && electionForm.voters.length + ' voters'}
                       >
-                        <Upload {...uploadProps}>
+                      {getFieldDecorator('voterUploader', {
+                        rules: [{ required: true, message: 'Please select a file.' }],
+                      })(
+                        <Upload {...voterUploadProps}>
                           <Button block>
                             <Icon type="upload" /> Upload .csv
                           </Button>
                         </Upload>
+                      )}
                       </FormItem>
                     </div>
                 }
@@ -517,12 +713,14 @@ class CreateVote extends Component {
             </Col>
           }
         </Row>
+        </Spin>
         <div id="fixed-footer">
           <div className="fixed-footer-right">
-            <Button onClick={this.createElection} type="primary" htmlType="submit">Create</Button>
+            <Button onClick={this.handleResetForm} style={{ marginRight: '8px' }} loading={this.state.fetching} type="primary" ghost>Reset</Button>
+            <Button onClick={this.createElection} loading={this.state.fetching} type="primary" >Create</Button>
           </div>
         </div>
-      </Spin>
+      </div>
     );
   }
 }

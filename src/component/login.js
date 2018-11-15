@@ -34,7 +34,7 @@ export default class Register extends Component {
         if (!addr) {
           this.props.history.push("/" + accounts[0] + "/" + email + "/" + rolePrefix + '/' + role);
         } else {
-          this.props.history.push("/" + accounts[0] + "/" + email + "1/voter/" + addr);
+          this.props.history.push("/" + accounts[0] + "/" + email + "/" + rolePrefix + "/" + role + '/' + addr + '/vote-info');
         }
       });
     }

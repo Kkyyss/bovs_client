@@ -19,7 +19,8 @@ export default class OrganizerPoll extends Component {
         isManual: false,
         status: 0,
         start: 0,
-        end: 0
+        end: 0,
+        votrSize: 0,
       },
       submitting: false,
       candidates: []
@@ -68,12 +69,55 @@ export default class OrganizerPoll extends Component {
     this.setState({ submitting: true });
 
     try {
-      await election.close(electionId, email, { from: accounts[0] });
+      await election.close(electionId, email, { from: accounts[0], gasPrice: 0 });
+      await this.fetchVoterEmails();
+      this.sendEmailNotification();
       this.setState({ submitting: false });
-      this.fetchElectionContent();
+      await this.fetchElectionContent();
     } catch (err) {
       this.setState({ submitting: false });
     }
+  }
+
+
+  fetchVoterEmails = async() => {
+    const { email, electionId } = this.props.match.params;
+    const { election } = this.state.contract;
+    const votrSize = await election.getVoterSize(electionId);
+
+    const voters = []
+    for (let i = 0; i < votrSize; i++) {
+      const voter = await election.getVoterEmail(electionId, i);
+
+      voters.push(voter)
+    }
+
+    this.setState({
+      electionInfo: {
+        ...this.state.electionInfo,
+        voters
+      }
+    })
+  }
+
+  sendEmailNotification = async() => {
+    const { email, electionId } = this.props.match.params;
+    const { title, isPublic, voters } = this.state.electionInfo
+
+    const response = await fetch(ENDPOINTS + "/close-email", {
+      credentials: 'same-origin',
+      method: 'POST',
+      headers: {
+        'Content-Type':'application/json',
+        'Authorization': 'Bearer ' + localStorage.getItem('token')
+      },
+      body: JSON.stringify({
+        emails: voters,
+        creator: email,
+        addr: electionId,
+        title
+      })
+    });
   }
 
   compareDate = async() => {
@@ -128,7 +172,7 @@ export default class OrganizerPoll extends Component {
         </Col>
       );
     }
-    this.setState({ electionInfo: { ...this.state.electionInfo, candidates }  })
+    this.setState({ electionInfo: { ...this.state.electionInfo, candidates, votrSize: votrSize.toNumber() }  })
   }
 
   fetchElectionContent = async() => {
@@ -165,12 +209,12 @@ export default class OrganizerPoll extends Component {
   render() {
     const CloseButton = () => {
       return (
-        <Button onClick={this.closeElection} type="primary">Stop</Button>
+        <Button onClick={this.closeElection} loading={this.state.submitting} type="primary">Stop</Button>
       )
     };
     const { fetching, submitting } = this.state;
     const { userId, email } = this.props.match.params;
-    const { title, imgURL, description, isPublic, status, start, end, isManual, candidates } = this.state.electionInfo;
+    const { title, imgURL, votrSize, description, isPublic, status, start, end, isManual, candidates } = this.state.electionInfo;
 
     const statusColor = ['green', 'lightgray', 'yellow']
     const statusText = ['now', 'end', 'starting']
@@ -210,7 +254,7 @@ export default class OrganizerPoll extends Component {
                 )}
                 <Row gutter={24}>
                   <Col xs={24} sm={24} md={4} lg={4} xl={4} xxl={4}>
-                    <Icon type="info-circle" theme="outlined" />{' Mode:'}
+                    <Icon type="info-circle" theme="filled" />{' Mode:'}
                   </Col>
                   <Col xs={24} sm={24} md={20} lg={20} xl={20} xxl={20}>
                     <div>{((isPublic === 0) ? "Private" : "Public") }</div>
@@ -218,7 +262,7 @@ export default class OrganizerPoll extends Component {
                 </Row>
                 <Row gutter={24}>
                   <Col xs={24} sm={24} md={4} lg={4} xl={4} xxl={4}>
-                    <Icon type="calendar" theme="outlined" />{' Start Date:'}
+                    <Icon type="calendar" theme="filled" />{' Start Date:'}
                   </Col>
                   <Col xs={24} sm={24} md={20} lg={20} xl={20} xxl={20}>
                     <div>{ ((start !== 0) ? moment.unix(start).format('MMMM Do YYYY, h:mm:ss a') : "----") }</div>
@@ -226,10 +270,18 @@ export default class OrganizerPoll extends Component {
                 </Row>
                 <Row gutter={24}>
                   <Col xs={24} sm={24} md={4} lg={4} xl={4} xxl={4}>
-                    <Icon type="calendar" theme="outlined" />{' End Date:'}
+                    <Icon type="calendar" theme="filled" />{' End Date:'}
                   </Col>
                   <Col xs={24} sm={24} md={20} lg={20} xl={20} xxl={20}>
                     <div>{((end !== 0) ? moment.unix(end).format('MMMM Do YYYY, h:mm:ss a') : "Manually")}</div>
+                  </Col>
+                </Row>
+                <Row gutter={24}>
+                  <Col xs={24} sm={24} md={4} lg={4} xl={4} xxl={4}>
+                    <Icon type="team" theme="outlined" />{' Voters:'}
+                  </Col>
+                  <Col xs={24} sm={24} md={20} lg={20} xl={20} xxl={20}>
+                    <div>{votrSize}</div>
                   </Col>
                 </Row>
               </div>
@@ -238,7 +290,7 @@ export default class OrganizerPoll extends Component {
           <Col xs={24} sm={24} md={24} lg={24} xl={24} xxl={24} style={{ marginBottom: '24px' }}>
             <Spin spinning={submitting}>
               <Card
-                title="Candidates"
+                title="Candidates/Options"
                 style={{ minHeight: '400px' }}
                 loading={fetching}
                 bordered={false}>

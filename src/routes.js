@@ -39,11 +39,11 @@ class Routes extends Component {
     return (
       <Switch>
         <Route exact path="/" render={(props)=><Home {...props} state={this.props.state} />} />
-        <Route exact path="/login/:email/:role/:token" render={(props)=><Login {...props} state={this.props.state} auth={this.props.auth} />} />
-        <Route exact path="/login/voter/:email/:token/:addr" render={(props)=><Login {...props} state={this.props.state} />} />
+        <Route exact path="/login/basic/:email/:role/:token" render={(props)=><Login {...props} state={this.props.state} auth={this.props.auth} />} />
+        <Route exact path="/login/:role/:email/:token/:addr" render={(props)=><Login {...props} state={this.props.state} />} />
         <Route exact path="/logout" component={Logout} />
         <AuthRoute exact path="/:userId/:email/:role/voter" component={Voter} />
-        <AuthRoute exact path="/:userId/:email/:role/voter/:electionId" component={VoterPoll} />
+        <AuthRoute exact path="/:userId/:email/:role/voter/:electionId/vote-info" component={VoterPoll} />
         <AuthRoute exact path="/:userId/:email/:role/organizer" component={Organizer}/>
         <AuthRoute exact path="/:userId/:email/:role/organizer/create" component={CreateVote} />
         <AuthRoute exact path="/:userId/:email/:role/organizer/:electionId/vote-info" component={OrganizerPoll} />

@@ -144,10 +144,15 @@ export default class PollsTable extends Component {
     const electionSize = await election.getSize();
     const myElectionAddress = [];
     let count = 0;
+    let addr;
 
     // Get election address
     for (let i = 0; i < electionSize; i++) {
-      const addr = await election.getVoterElectionAddress(email, i);
+      if (this.props.isVoter) {
+        addr = await election.getVoterElectionAddress(email, i);
+      } else {
+        addr = await election.getOwnerElectionAddress(email, i);
+      }
 
       if (!addr[1]) {
         continue;
@@ -195,7 +200,7 @@ export default class PollsTable extends Component {
 
     const { pathname } = this.props.location;
     const data = this.state.dataSource.filter(item => item.key === key)
-    this.props.history.push(pathname + "/" + data[0].address + (!this.props.isVoter &&  "/vote-info" || ""));
+    this.props.history.push(pathname + "/" + data[0].address + "/vote-info");
   }
 
   handleTableChange = (pagination, filters, sorter) => {

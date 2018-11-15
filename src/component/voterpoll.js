@@ -20,7 +20,8 @@ export default class VoterPoll extends Component {
         status: 0,
         winner: null,
         start: 0,
-        end: 0
+        end: 0,
+        votrSize: 0,
       },
       voter: {
         voted: false,
@@ -136,7 +137,7 @@ export default class VoterPoll extends Component {
       candidates.push(
         <Col key={i} xs={24} sm={24} md={8} lg={8} xl={6} xxl={4} style={{ marginBottom: '24px' }}>
           <Card cover={<img height="192" onError={this.handleBrokenImg} src={cand[2]} />}>
-            <Card.Meta title={<div>{cand[1] + ' '}{(voted && cand[1] === votedTo) && <Tag color='green'>voted</Tag>}</div>} description={cand[3]} />
+            <Card.Meta title={cand[1]} description={cand[3]} />
             { status === 1 &&
             <div style={{ marginTop: '24px', textAlign: 'center' }}>
               <Progress type="circle" strokeWidth={10} percent={(cand[4].toNumber() / votrSize.toNumber()) * 100}
@@ -158,7 +159,7 @@ export default class VoterPoll extends Component {
         </Col>
       );
     }
-    this.setState({ electionInfo: { ...this.state.electionInfo, candidates }  })
+    this.setState({ electionInfo: { ...this.state.electionInfo, candidates, votrSize: votrSize.toNumber() }  })
   }
 
   openNotification = (type, message, description, duration) => {
@@ -178,7 +179,7 @@ export default class VoterPoll extends Component {
     const { accounts } = this.state.user;
 
     try {
-      await election.vote(electionId, email, e.target.value, { from: accounts[0] });
+      await election.vote(electionId, email, e.target.value, { from: accounts[0], gasPrice: 0 });
       this.fetchElectionContent();
     } catch (err) {
       this.openNotification('error', 'Error', 'Failed to vote.', 4.5);
@@ -190,7 +191,7 @@ export default class VoterPoll extends Component {
     const { fetching, submitting } = this.state;
     const { userId, email } = this.props.match.params;
     const { voted, votedTo } = this.state.voter;
-    const { title, imgURL, description, isPublic, status, start, end, isManual, winner, candidates } = this.state.electionInfo;
+    const { title, votrSize, imgURL, description, isPublic, status, start, end, isManual, winner, candidates } = this.state.electionInfo;
     const statusColor = ['green', 'lightgray', 'yellow']
     const statusText = ['now', 'end', 'starting']
 
@@ -251,16 +252,22 @@ export default class VoterPoll extends Component {
                     <div>{((end !== 0) ? moment.unix(end).format('MMMM Do YYYY, h:mm:ss a') : "Manually")}</div>
                   </Col>
                 </Row>
-                { voted &&
+                <Row gutter={24}>
+                  <Col xs={24} sm={24} md={4} lg={4} xl={4} xxl={4}>
+                    <Icon type="team" theme="outlined" />{' Voters:'}
+                  </Col>
+                  <Col xs={24} sm={24} md={20} lg={20} xl={20} xxl={20}>
+                    <div>{votrSize}</div>
+                  </Col>
+                </Row>
                 <Row gutter={24}>
                   <Col xs={24} sm={24} md={4} lg={4} xl={4} xxl={4}>
                     <Icon type="check" theme="outlined" />{' Voted To:'}
                   </Col>
                   <Col xs={24} sm={24} md={20} lg={20} xl={20} xxl={20}>
-                    <div>{votedTo}</div>
+                    <div>{voted && votedTo || 'N/A'}</div>
                   </Col>
                 </Row>
-                }
               </div>
             </Card>
           </Col>
