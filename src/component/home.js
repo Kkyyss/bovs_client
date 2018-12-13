@@ -82,7 +82,7 @@ class Home extends Component {
     if (response.status !== 200) {
       this.openNotification('error', 'Error', "The magic link was failed to send.");
     } else {
-      this.openNotification('success', 'Success', "The magic link was sent successfully.");
+      this.openNotification('success', 'Success', "The magic link was sent successfully. Please Check your Email inbox.");
     }
   }
 
@@ -136,7 +136,6 @@ class Home extends Component {
             </div>
           </div>
           <footer className="footer">
-              { "2019 | [FYP] Blockchain-based Online Voting System | ONG KANG YI | ASIA PACIFIC UNIVERSITY" }
           </footer>
         </div>
       </Spin>

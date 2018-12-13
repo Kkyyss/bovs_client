@@ -142,7 +142,7 @@ class CreateVote extends Component {
     }
 
     if (err) {
-      this.setState({ startDateRangeErr: true, startDRMsg:'Please ensure the start datetime is not more than or equal to the end datetime'});
+      this.setState({ startDateRangeErr: true, startDRMsg:'Please ensure the start datetime is less than the end datetime'});
       return false;
     }
     this.setState({ startDateRangeErr: false, startDRMsg:''});
@@ -334,7 +334,7 @@ class CreateVote extends Component {
     const re = /\S+@\S+\.\S+/;
     if (voters.length < 1) {
         this.props.form.resetFields('voterUploader')
-        this.openNotification('error', 'Error', 'Minimum numbers of voter should be 1.', 4.5)
+        this.openNotification('error', 'Error', 'Minimum numbers of voter should be at least 1.', 4.5)
         this.setState({
           voterFileList: [],
         })
@@ -484,12 +484,12 @@ class CreateVote extends Component {
                   <Col xs={24} sm={12} md={12} lg={12} xl={12} xxl={12}>
                     <FormItem colon={false} label="Title">
                       {getFieldDecorator('title', {
-                        rules: [{ required: true, message: 'please enter voting title.' }],
+                        rules: [{ required: true, message: 'Please enter voting title.' }],
                       })(<Input className="input-setting"
                         suffix={
                           <Button type="primary" onClick={this.handleVisibleTitle} icon="setting"/>
                         }
-                        placeholder="please enter voting title" />)}
+                        placeholder="Please enter voting title" />)}
                     </FormItem>
                   </Col>
                   <Col xs={24} sm={12} md={12} lg={12} xl={12} xxl={12}>
@@ -561,12 +561,12 @@ class CreateVote extends Component {
                       </span>
                     )}>
                       {getFieldDecorator('isManual', {
-                        rules: [{ required: true, message: 'Please choose the end date mode' }],
+                        rules: [{ required: true, message: 'Please choose the end date mode.' }],
                         initialValue: '0'
                       })(
                         <RadioGroup onChange={this.handleEndModeChange}>
                           <RadioButton value="0">Custom</RadioButton>
-                          <RadioButton value="1">Manual</RadioButton>
+                          <RadioButton value="1">Manually</RadioButton>
                         </RadioGroup>
                       )}
                     </FormItem>
@@ -575,7 +575,7 @@ class CreateVote extends Component {
                         { getFieldDecorator('endDateTime', {
                           rules: [
                             {
-                              required: true, message: 'Please choose the end datetime'
+                              required: true, message: 'Please choose the end date.'
                             }
                           ],
                         })(
@@ -642,7 +642,7 @@ class CreateVote extends Component {
                         extra={ !electionForm.manuallyAddCandidate && electionForm.cand_name.length !== 0 && electionForm.cand_name.length + ' candidates/options'}
                       >
                         {getFieldDecorator('candUploader', {
-                          rules: [{ required: true, message: 'Please select a file.' }],
+                          rules: [{ required: true, message: 'Please select a CSV file.' }],
                         })(
                           <Upload {...candUploadProps}>
                             <Button block>
@@ -698,7 +698,7 @@ class CreateVote extends Component {
                         extra={ !electionForm.manuallyAddVoter && electionForm.voters.length !== 0 && electionForm.voters.length + ' voters'}
                       >
                       {getFieldDecorator('voterUploader', {
-                        rules: [{ required: true, message: 'Please select a file.' }],
+                        rules: [{ required: true, message: 'Please select a CSV file.' }],
                       })(
                         <Upload {...voterUploadProps}>
                           <Button block>

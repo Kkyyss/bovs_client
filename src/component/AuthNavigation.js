@@ -210,7 +210,6 @@ export default class AuthNavigation extends Component {
               </div>
             </Content>
             <footer className="footer">
-              { "2019 | [FYP] Blockchain-based Online Voting System | ONG KANG YI | ASIA PACIFIC UNIVERSITY" }
             </footer>
           </Layout>
         </Layout>

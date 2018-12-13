@@ -97,7 +97,8 @@ class App extends Component {
         </div>
       );
     }
-    if (!this.state.web3) {
+
+    if (!this.state.web3 || (this.state.user.accounts && this.state.user.accounts.length === 0)) {
       return <ErrorPage />
     }
 

@@ -265,7 +265,7 @@ export default class VoterPoll extends Component {
                     <Icon type="check" theme="outlined" />{' Voted To:'}
                   </Col>
                   <Col xs={24} sm={24} md={20} lg={20} xl={20} xxl={20}>
-                    <div>{voted && votedTo || 'N/A'}</div>
+                    <div>{voted && votedTo || <Tag color='gray'>Not Yet Vote</Tag>}</div>
                   </Col>
                 </Row>
               </div>
@@ -274,7 +274,7 @@ export default class VoterPoll extends Component {
           <Col xs={24} sm={24} md={24} lg={24} xl={24} xxl={24} style={{ marginBottom: '24px' }}>
             <Spin spinning={submitting}>
               <Card
-                title="Candidates"
+                title="Candidates/Options"
                 style={{ minHeight: '400px' }}
                 loading={fetching}
                 bordered={false}>
