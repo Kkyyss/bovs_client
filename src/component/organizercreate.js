@@ -126,19 +126,19 @@ class CreateVote extends Component {
 
     let err = false;
     if (value) {
-      err = value && value.startOf('minute').valueOf() <= moment().startOf('minute').valueOf();
+      err = value && moment(value).startOf('minute').valueOf() <= moment().startOf('minute').valueOf();
     } else {
-      err = startDate && startDate.startOf('minute').valueOf() <= moment().startOf('minute').valueOf();
+      err = startDate && moment(startDate).startOf('minute').valueOf() <= moment().startOf('minute').valueOf();
     }
     if (err) {
-      this.setState({ startDateRangeErr: true, startDRMsg: 'Please ensure the start datetime is more than the current datetime'});
+      this.setState({ startDateRangeErr: true, startDRMsg: 'Please ensure the start datetime is greater than the current datetime'});
       return false;
     }
 
     if (value) {
-      err = value && value.valueOf() >= endDate.valueOf();
+      err = value && moment(value).valueOf() >= moment(endDate).valueOf();
     } else {
-      err = endDate && startDate && startDate.valueOf() >= endDate.valueOf();
+      err = endDate && startDate && moment(startDate).valueOf() >= moment(endDate).valueOf();
     }
 
     if (err) {
@@ -165,7 +165,7 @@ class CreateVote extends Component {
       err = endDate && endDate.startOf('minute').valueOf() <= moment().startOf('minute').valueOf();
     }
     if (err) {
-      this.setState({ endDateRangeErr: true, endDRMsg: 'Please ensure the end datetime is more than the current datetime'});
+      this.setState({ endDateRangeErr: true, endDRMsg: 'Please ensure the end datetime is greater than the current datetime'});
       return false;
     }
 
@@ -175,7 +175,7 @@ class CreateVote extends Component {
       err = startDate && endDate && endDate.valueOf() <= startDate.valueOf();
     }
     if (err) {
-      this.setState({ endDateRangeErr: true, endDRMsg: 'Please ensure the end datetime is more than the start datetime'});
+      this.setState({ endDateRangeErr: true, endDRMsg: 'Please ensure the end datetime is greater than the start datetime'});
       return false;
     }
     this.setState({ endDateRangeErr: false, endDRMsg:''});
@@ -397,12 +397,12 @@ class CreateVote extends Component {
   handleDownloadVoterTemplate = async(e) => {
     e.preventDefault();
 
-    saveAs(ENDPOINTS + '/dl/voter_template.csv', 'voter_template.csv');
+    saveAs(ENDPOINTS + '/dl/v_template.csv', 'voter_template.csv');
   }
   handleDownloadCandidateTemplate = async(e) => {
     e.preventDefault();
 
-    saveAs(ENDPOINTS + '/dl/candidate_template.csv', 'candidate_template.csv');
+    saveAs(ENDPOINTS + '/dl/c_template.csv', 'candidate_template.csv');
   }
 
   render() {
@@ -634,7 +634,7 @@ class CreateVote extends Component {
                 { electionForm.manuallyAddCandidate && <AddCandidate {...this.props} /> ||
                     <div>
                       <FormItem>
-                        <Button type="primary" onClick={this.handleDownload} block>
+                        <Button type="primary" onClick={this.handleDownloadCandidateTemplate} block>
                           <Icon type="download" /> Download .csv Template
                         </Button>
                       </FormItem>
@@ -690,7 +690,7 @@ class CreateVote extends Component {
                 { electionForm.manuallyAddVoter && <AddVoter {...this.props} /> ||
                     <div>
                       <FormItem>
-                        <Button type="primary" onClick={this.handleDownload} block>
+                        <Button type="primary" onClick={this.handleDownloadVoterTemplate} block>
                           <Icon type="download" /> Download .csv Template
                         </Button>
                       </FormItem>

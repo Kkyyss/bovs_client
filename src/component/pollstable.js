@@ -284,7 +284,7 @@ export default class PollsTable extends Component {
             size='small'
             expandedRowRender={this.expandedRowRender}
             locale={{
-              emptyText: this.props.isVoter && 'No invitation so far.' || 'No polls were created so far.'
+              emptyText: this.props.isVoter && 'No public poll or invitation so far.' || 'No polls were created so far.'
             }}
             pagination={{
               pageSize: 10,

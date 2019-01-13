@@ -50,8 +50,7 @@ class App extends Component {
       ElectionContract.setProvider(web3.currentProvider);
       const electionInstance = await ElectionContract.deployed();
 
-      // Set web3, accounts, and contract to the state, and then proceed with an
-      // example of interacting with the contract's methods.
+      // Set web3, accounts, and contract to the state
       this.setState({
         fetching: false,
         web3,
@@ -59,6 +58,7 @@ class App extends Component {
         contract: {
           election: electionInstance
         } });
+      // Listen the MetaMask's update event (i.e. login, logout)
       web3.currentProvider.publicConfigStore.on('update', async() => {
         const { web3 } = this.state;
         const { accounts } = this.state.user;
@@ -72,6 +72,7 @@ class App extends Component {
     }
   }
 
+  // Replace the system's date and time with the API server's one.
   initialServerDateTime = async() => {
     const response = await fetch(ENDPOINTS + "/current-dt", {
       credentials: 'same-origin',

@@ -48,6 +48,7 @@ export default class OrganizerPoll extends Component {
     const { election } = this.state.contract;
     const { web3 } = this.state;
 
+    // get latest block of the blockchain network
     const latestBlock = await web3.eth.getBlockNumber();
     election.votedEvent().watch((err, response) => {
       if (response.blockNumber > latestBlock) {

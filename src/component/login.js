@@ -50,7 +50,7 @@ export default class Register extends Component {
     message.config({
       maxCount: 1,
     });
-    message.error('Failed to authentiacted!', 0);
+    message.error('Failed to authentiacte!', 0);
   }
 
   render() {

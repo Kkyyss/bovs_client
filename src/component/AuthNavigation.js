@@ -23,7 +23,7 @@ export default class AuthNavigation extends Component {
 
   componentDidMount = async() => {
     this.setState({ fetching: true });
-    // await this.fetchAuth();
+    await this.fetchAuth();
     this.setState({ fetching: false });
   }
 
